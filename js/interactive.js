@@ -303,7 +303,7 @@ function filterAndRender() {
     const displayCat = categoryTranslations[cleanCat] || cleanCat;
     
     const coverName = c.cover_thumbnail || c.cover;
-    const coverPath = coverName ? `taozijia-images/${cleanCat}/${cleanFolder}/${coverName}` : 'images/placeholder.jpg';
+    const coverPath = coverName ? `https://pub-c27c049b74f4461ba2a65fc868333e33.r2.dev/taozijia-images/${cleanCat}/${cleanFolder}/${coverName}` : 'images/placeholder.jpg';
     
     const card = document.createElement('div');
     card.className = 'case-card animate-fade-in-up';
@@ -396,7 +396,7 @@ function initCaseDetail() {
       document.getElementById('case-count').textContent = foundCase.images_count;
       document.title = `${foundCase.title} - ${displayCat} - Taozijia Photography`;
       
-      activeCasePhotos = foundCase.images.map(imgName => `taozijia-images/${cleanCat}/${cleanFolder}/${imgName}`);
+      activeCasePhotos = foundCase.images.map(imgName => `https://pub-c27c049b74f4461ba2a65fc868333e33.r2.dev/taozijia-images/${cleanCat}/${cleanFolder}/${imgName}`);
       
       photosGrid.innerHTML = '';
       
@@ -407,7 +407,7 @@ function initCaseDetail() {
           thumbName = wechatThumb;
         }
         
-        const thumbPath = `taozijia-images/${cleanCat}/${cleanFolder}/${thumbName}`;
+        const thumbPath = `https://pub-c27c049b74f4461ba2a65fc868333e33.r2.dev/taozijia-images/${cleanCat}/${cleanFolder}/${thumbName}`;
         
         const photoItem = document.createElement('div');
         photoItem.className = 'case-photo-item';
