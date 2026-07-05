@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal Post | Lana Sky Photography</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <style>
+    .blog-post-container {
+      max-width: 900px;
+      margin: 160px auto 100px;
+      padding: 0 20px;
+    }
+    .blog-post-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .blog-post-tag {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 15px;
+      display: inline-block;
+      font-weight: 500;
+    }
+    .blog-post-header h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .blog-post-meta {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .blog-post-featured-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      margin-bottom: 60px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: var(--shadow-premium);
+    }
+    .blog-post-featured-img img {
+      width: 100%;
+      height: 100%;
+    }
+    .blog-post-content {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+    .blog-post-content p {
+      margin-bottom: 25px;
+      text-align: justify;
+    }
+    .blog-post-content p::first-letter {
+      font-size: 3rem;
+      float: left;
+      font-family: var(--font-serif);
+      line-height: 1;
+      margin-right: 8px;
+      color: var(--accent-gold);
+    }
+    .blog-post-content p + p::first-letter {
+      font-size: inherit;
+      float: none;
+      font-family: inherit;
+      line-height: inherit;
+      margin-right: 0;
+      color: inherit;
+    }
+    .blog-post-content h2 {
+      font-size: 1.8rem;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .blog-post-content blockquote {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-style: italic;
+      border-left: 3px solid var(--accent-gold);
+      padding-left: 25px;
+      margin: 40px 0;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    .blog-post-inline-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 40px 0;
+    }
+    @media (max-width: 576px) {
+      .blog-post-inline-gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+    .blog-post-inline-gallery img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: var(--radius-sm);
+    }
+  </style>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+</head>
+<body>
+
+                <!-- HEADER -->
+  <header>
+    <div class="navbar container">
+      <a href="index.html" class="logo-container">
+        <img src="logo.png" alt="Lana Sky Photography Logo">
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <!-- Sessions Dropdown (Vertical Box Menu matching screenshot) -->
+          <li class="dropdown sessions-dropdown">
+            <a href="#">Sessions <span style="font-size: 0.65rem; vertical-align: middle;">▼</span></a>
+            <div class="dropdown-menu sessions-menu-box">
+              <div class="sessions-menu-item">
+                <a href="sessions-lavender.html">
+                  <span class="sessions-item-title">Lavender Farm Sessions</span>
+                  <span class="sessions-item-desc">Explore seasonal lavender farm sessions for family and maternity photos, review pricing and availability, and book a session while the lavender is in bloom.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-maternity.html">
+                  <span class="sessions-item-title">Maternity Sessions</span>
+                  <span class="sessions-item-desc">Compare outdoor and studio maternity options, review pricing and availability, and book a comfortable, guided session before baby arrives.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-newborn.html">
+                  <span class="sessions-item-title">Newborn Sessions</span>
+                  <span class="sessions-item-desc">Explore studio and in-home newborn options, see what each includes, and choose the right session for your baby and family.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-milestone.html">
+                  <span class="sessions-item-title">Milestone Sessions</span>
+                  <span class="sessions-item-desc">Find first birthday and baby milestone options, including classic portraits and cake smash sessions, with galleries, pricing, and booking details.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-family.html">
+                  <span class="sessions-item-title">Family Sessions</span>
+                  <span class="sessions-item-desc">Compare outdoor and studio family sessions, review pricing and available dates, and book updated photos for this stage of your family.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item no-desc">
+                <a href="contact.html">
+                  <span class="sessions-item-title">Gift Cards</span>
+                </a>
+              </div>
+            </div>
+          </li>
+          
+          <!-- Portfolio Dropdown (Mega Menu) -->
+          <li class="dropdown mega-dropdown">
+            <a href="portfolio.html">Portfolio <span style="font-size: 0.65rem; vertical-align: middle;">▼</span></a>
+            <div class="mega-menu">
+              <div class="mega-menu-grid">
+                <div class="mega-menu-col">
+                  <h4>Maternity & Newborn</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=孕照">
+                        <span class="mega-menu-link-title">🤰 Maternity</span>
+                        <span class="mega-menu-link-desc">Pregnancy portraits.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=新生儿—满月">
+                        <span class="mega-menu-link-title">👶 Newborn</span>
+                        <span class="mega-menu-link-desc">Fleeting first days.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=Fresh 48">
+                        <span class="mega-menu-link-title">🏥 Fresh 48</span>
+                        <span class="mega-menu-link-desc">Hospital first hours.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=棚拍孕照|全家福">
+                        <span class="mega-menu-link-title">🏠 Studio Family</span>
+                        <span class="mega-menu-link-desc">Cozy studio bonds.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <h4>Milestones</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=百天布景写真">
+                        <span class="mega-menu-link-title">🧸 100-Day Studio</span>
+                        <span class="mega-menu-link-desc">Milestone setups.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=百天纪实">
+                        <span class="mega-menu-link-title">📷 100-Day Lifestyle</span>
+                        <span class="mega-menu-link-desc">Home lifestyle document.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=周岁布景写真">
+                        <span class="mega-menu-link-title">🎂 One-Year Studio</span>
+                        <span class="mega-menu-link-desc">First birthday setups.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=布景周岁礼">
+                        <span class="mega-menu-link-title">🎈 One-Year Ceremony</span>
+                        <span class="mega-menu-link-desc">Traditional birthday.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <h4>Family & Portrait</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=宝宝外景写真">
+                        <span class="mega-menu-link-title">👒 Baby Outdoor</span>
+                        <span class="mega-menu-link-desc">Toddlers in nature.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=纪实跟拍">
+                        <span class="mega-menu-link-title">🌿 Family Lifestyle</span>
+                        <span class="mega-menu-link-desc">Candid lifestyle bonds.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=棚拍写真">
+                        <span class="mega-menu-link-title">🖼️ Studio Portrait</span>
+                        <span class="mega-menu-link-desc">Clean, simple styling.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=Darcy 作品">
+                        <span class="mega-menu-link-title">🎨 Darcy Collection</span>
+                        <span class="mega-menu-link-desc">Curated editorial.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <h4>Mini & Specials</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=外景 Mini">
+                        <span class="mega-menu-link-title">🌲 Outdoor Mini</span>
+                        <span class="mega-menu-link-desc">Quick scenic shoots.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=Mini Session">
+                        <span class="mega-menu-link-title">⚡ Mini Session</span>
+                        <span class="mega-menu-link-desc">Studio highlights.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=季节限定">
+                        <span class="mega-menu-link-title">🌸 Seasonal Special</span>
+                        <span class="mega-menu-link-desc">Blossoms & tree farms.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=领证·婚礼系列">
+                        <span class="mega-menu-link-title">💍 Wedding & Event</span>
+                        <span class="mega-menu-link-desc">Ceremonies & registers.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-btn">
+        <a href="booking.html" class="btn btn-primary">Book a Shoot</a>
+      </div>
+      <div class="mobile-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-overlay"></div>
+    <div class="mobile-nav">
+      <ul class="mobile-nav-links">
+        <li>
+          <a href="#">Sessions</a>
+          <ul class="mobile-nav-submenu">
+            <li><a href="sessions-lavender.html">Lavender Farm Sessions</a></li>
+            <li><a href="sessions-maternity.html">Maternity Sessions</a></li>
+            <li><a href="sessions-newborn.html">Newborn Sessions</a></li>
+            <li><a href="sessions-milestone.html">Milestone Sessions</a></li>
+            <li><a href="sessions-family.html">Family Sessions</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="portfolio.html">Portfolio</a>
+          <ul class="mobile-nav-submenu">
+            <li><a href="portfolio.html?cat=孕照">Maternity</a></li>
+            <li><a href="portfolio.html?cat=新生儿—满月">Newborn</a></li>
+            <li><a href="portfolio.html?cat=宝宝外景写真">Baby Outdoor</a></li>
+            <li><a href="portfolio.html?cat=棚拍写真">Studio Portrait</a></li>
+            <li><a href="portfolio.html?cat=领证·婚礼系列">Wedding & Registry</a></li>
+          </ul>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Book a Shoot</a>
+    </div>
+  </header>
+
+  <!-- BLOG POST CONTAINER -->
+  <article class="blog-post-container">
+    <div class="blog-post-header">
+      <span class="blog-post-tag">NEWBORN</span>
+      <h1 id="post-title">Welcoming Baby Henry: A Studio Newborn Session</h1>
+      <div class="blog-post-meta">
+        <span>By Lana Sky</span>
+        <span>Published May 20, 2024</span>
+        <span>Reading Time: ~4 min</span>
+      </div>
+    </div>
+    
+    <div class="blog-post-featured-img">
+      <img src="taozijia-images/新生儿—满月/Fresh 48 (Fresh48)/001_work_579008_613nz_260622_185439_0690_3dmf0.jpeg" alt="Newborn sleeping session">
+    </div>
+    
+    <div class="blog-post-content">
+      <p>The morning light filtered softly through the lace curtains, painting delicate stripes of gold across the wooden floor. Baby Henry slept peacefully in the center of the nursery, wrapped snug in a soft cotton swaddle. His tiny nose twitched as he drifted in a sweet, pure dream. It was our second hour at Henry's cozy home, and the room was quiet save for the soft hum of a lullaby and the gentle click of my shutter.</p>
+      
+      <p>Newborn photography is an exercise in patience. When I first arrived, Henry was slightly unsettled. Instead of rushing to set up the camera, we paused to let mama nurse him. I paced, swayed, and hummed, waiting for him to sink into a deep, milk-drunk sleep. In newborn sessions, babies always lead the way, and keeping the environment warm, peaceful, and unhurried is my highest priority.</p>
+      
+      <blockquote>
+        “The most moving photographs are never the ones that are perfectly posed—they are the ones that capture the quiet, honest connection that overflows when a new life is welcomed.”
+      </blockquote>
+      
+      <h2>Documenting the Tiny Details</h2>
+      
+      <p>During the thirty minutes Henry slept soundly, I focused on capturing the fleeting details you never want to forget: his tiny curled fingers, the soft fuzz on his shoulders, and the way his feet curled together. These features disappear so quickly as babies grow. Preserving them now means you can always hold onto the memory of how small and soft they once were in your arms.</p>
+      
+      <div class="blog-post-inline-gallery">
+        <img src="taozijia-images/Fresh 48/Fresh48 ｜生命最珍贵的初见. 医院跟拍/001_work_579008_5yh3q_260606_081029_5110_hy3ye.jpeg" alt="Fresh 48 hospital shoot">
+        <img src="taozijia-images/百天布景写真/百天-半岁布景写真女宝/001_work_579008_zovlu_260629_135718_3960_nvi8w.jpeg" alt="Milestone baby smile">
+      </div>
+      
+      <h2>Heartfelt Connections</h2>
+      
+      <p>When Henry woke, we captured the sweetest family connections. In the soft light, Henry's father cradled him in his hands, marveling at how tiny he felt in his palms. His mother held him close, resting her forehead against his. It is a privilege to capture these beginnings and preserve a family's legacy. A huge thank you to Henry's parents for trusting me to document this season of their story.</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 60px;">
+      <a href="blog.html" class="btn btn-secondary">← Back to Journal</a>
+    </div>
+  </article>
+
+
+  <!-- PRE-FOOTER CTA -->
+  <section class="prefooter-cta">
+    <div class="prefooter-mosaic">
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/孕照/Alviso Marina _ 盐湖 (Alviso Marina)/001_work_579008_1g0c9_250731_193204_7070_7eo4c.jpeg')"></div>
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/新生儿—满月/Fresh 48 (Fresh48)/001_work_579008_613nz_260622_185439_0690_3dmf0.jpeg')"></div>
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/Darcy 作品/Ethan 湖边家庭照 (Ethan 湖边纪实)/001_work_579008_51njy_260622_231500_9940_nu7cg.jpeg')"></div>
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/周岁布景写真/周岁女宝-限周岁，可上门/001_work_579008_e5ubj_260622_222816_0860_deu7u.jpeg')"></div>
+    </div>
+    <div class="prefooter-overlay">
+      <p class="prefooter-eyebrow">INSPIRED? LET'S WORK TOGETHER</p>
+      <h2 class="prefooter-heading">Bring Your Family's Story to Life</h2>
+      <a href="booking.html" class="btn btn-outline-white">Book a Session</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-logo-col">
+        <img src="logo.png" alt="Lana Sky Logo" class="logo">
+        <div class="footer-divider"></div>
+        <p>Timeless photographs. Real connections. Preserving your story with warmth, artistry, and heart.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="sessions-maternity.html">What to Expect</a></li>
+          <li><a href="sessions-newborn.html">Wardrobe Guide</a></li>
+          <li><a href="sessions-family.html">FAQs</a></li>
+          <li><a href="contact.html">Gift Cards</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Service Areas</h4>
+        <ul>
+          <li><a href="contact.html#areas">Seattle</a></li>
+          <li><a href="contact.html#areas">Bellevue</a></li>
+          <li><a href="contact.html#areas">Kirkland</a></li>
+          <li><a href="contact.html#areas">Redmond</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact-col">
+        <h4>Let's Connect</h4>
+        <p><strong>Email:</strong> hello@lanaskyphotography.com</p>
+        <p><strong>WeChat:</strong> YYPhotography2022</p>
+        <p><strong>Locations:</strong> Serving Seattle & the Eastside and surrounding areas</p>
+        <div class="footer-socials">
+          <a href="#" title="WeChat">WeChat</a>
+          <a href="#" title="Redbook">Redbook</a>
+          <a href="#" title="Weibo">Weibo</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Lana Sky Photography. All Rights Reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/interactive.js"></script>
+</body>
+</html>

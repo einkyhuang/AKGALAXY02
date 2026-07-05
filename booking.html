@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Your Session | Lana Sky Photography</title>
+  <meta name="description" content="Schedule your portrait session with Lana Sky Photography. Select date, submit details, agree to terms, and reserve with a deposit.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <style>
+    /* Wizard Steps Navigation Bar */
+    .wizard-steps {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+      gap: 15px;
+      position: relative;
+    }
+    .wizard-step-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+      width: 100px;
+    }
+    .wizard-step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+    .wizard-step-node.active {
+      color: var(--accent-gold);
+    }
+    .wizard-step-node.active .wizard-step-circle {
+      background-color: var(--accent-gold);
+      color: var(--bg-white);
+      border-color: var(--accent-gold);
+    }
+    .wizard-step-node.completed {
+      color: var(--text-primary);
+    }
+    .wizard-step-node.completed .wizard-step-circle {
+      background-color: var(--text-primary);
+      color: var(--bg-white);
+      border-color: var(--text-primary);
+    }
+
+    /* Container for Wizard Card */
+    .booking-wizard-card {
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      padding: 40px;
+      margin-bottom: 50px;
+      box-shadow: var(--shadow-premium);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Step Panels */
+    .wizard-panel {
+      display: none;
+    }
+    .wizard-panel.active {
+      display: block;
+    }
+
+    /* Selector for Sessions if no type passed */
+    .package-selector-wrapper {
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .package-selector-wrapper label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .package-selector-wrapper select {
+      padding: 14px 40px 14px 18px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      width: 100%;
+      max-width: 450px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238c8273' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      background-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .package-selector-wrapper select:focus {
+      border-color: var(--text-primary);
+      outline: none;
+    }
+
+    /* Detail Card Style */
+    .appointment-summary-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      margin-bottom: 35px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .appointment-summary-thumb {
+      width: 150px;
+      aspect-ratio: 3/2;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+    .appointment-summary-info {
+      flex: 1;
+    }
+    .appointment-summary-info h3 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+    .appointment-summary-price {
+      font-weight: 600;
+      color: var(--accent-gold);
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    .appointment-summary-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Calendar Grid */
+    .calendar-widget-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      border: 1px solid var(--border-color);
+      padding: 30px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-white);
+    }
+    @media (max-width: 768px) {
+      .calendar-widget-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+    .calendar-month-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    .calendar-month-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      font-family: var(--font-serif);
+    }
+    .calendar-arrow-btn {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-primary);
+      padding: 5px 10px;
+    }
+    .calendar-arrow-btn:disabled {
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+    .calendar-days-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+    }
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      row-gap: 12px;
+      text-align: center;
+    }
+    .calendar-day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-radius: 50%;
+      user-select: none;
+      transition: all 0.2s ease;
+      color: var(--text-muted);
+    }
+    .calendar-day-cell.inactive {
+      cursor: not-allowed;
+      color: #eaeaea;
+    }
+    .calendar-day-cell.clickable {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .calendar-day-cell.clickable:hover {
+      background-color: var(--bg-secondary);
+    }
+    .calendar-day-cell.selected {
+      background-color: var(--text-primary) !important;
+      color: var(--bg-white) !important;
+      font-weight: 600;
+    }
+
+    /* Time Slots Column */
+    .time-slots-column {
+      border-left: 1px solid var(--border-color);
+      padding-left: 30px;
+    }
+    @media (max-width: 768px) {
+      .time-slots-column {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--border-color);
+        padding-top: 30px;
+      }
+    }
+    .time-slots-header {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+    .time-zone-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 25px;
+      letter-spacing: 0.05em;
+    }
+    .time-slots-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .time-slot-btn {
+      width: 100%;
+      padding: 16px;
+      text-align: center;
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .time-slot-btn:hover {
+      border-color: var(--text-primary);
+    }
+    .time-slot-btn.selected {
+      border-color: var(--accent-gold);
+      background-color: var(--accent-light);
+      color: var(--accent-gold);
+    }
+
+    /* Form Fields Grid */
+    .form-fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+    .form-field-full {
+      grid-column: span 2;
+    }
+    @media (max-width: 768px) {
+      .form-fields-grid > * {
+        grid-column: span 2 !important;
+      }
+    }
+    .booking-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .booking-field-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .booking-field-group input,
+    .booking-field-group textarea {
+      padding: 14px 18px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      width: 100%;
+      background-color: var(--bg-secondary);
+      transition: border-color 0.2s ease;
+    }
+    .booking-field-group input:focus,
+    .booking-field-group textarea:focus {
+      border-color: var(--text-primary);
+      outline: none;
+    }
+    .booking-field-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* Phone Input Wrap */
+    .phone-input-wrap {
+      display: flex;
+      gap: 10px;
+    }
+    .phone-flag-select {
+      padding: 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-secondary);
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* Terms Area */
+    .terms-scroll-area {
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      padding: 24px;
+      height: 350px;
+      overflow-y: scroll;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .terms-scroll-area h4 {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 15px;
+      margin-bottom: 8px;
+    }
+    .terms-scroll-area ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 15px;
+    }
+    .terms-checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .terms-checkbox-wrap input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    /* Payment Summary Block */
+    .payment-summary-block {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+    .payment-summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.95rem;
+    }
+    .payment-summary-row:last-child {
+      border-bottom: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    /* Wizard Action Bar */
+    .wizard-action-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 30px;
+    }
+
+    /* Success Block */
+    .booking-success-block {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .booking-success-icon {
+      font-size: 4rem;
+      color: var(--accent-gold);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+  <header>
+    <div class="navbar container">
+      <a href="index.html" class="logo-container">
+        <img src="logo.png" alt="Lana Sky Photography Logo">
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <!-- Sessions Dropdown (Vertical Box Menu matching screenshot) -->
+          <li class="dropdown sessions-dropdown">
+            <a href="#">Sessions <span style="font-size: 0.65rem; vertical-align: middle;">▼</span></a>
+            <div class="dropdown-menu sessions-menu-box">
+              <div class="sessions-menu-item">
+                <a href="sessions-lavender.html">
+                  <span class="sessions-item-title">Lavender Farm Sessions</span>
+                  <span class="sessions-item-desc">Explore seasonal lavender farm sessions for family and maternity photos, review pricing and availability, and book a session while the lavender is in bloom.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-maternity.html">
+                  <span class="sessions-item-title">Maternity Sessions</span>
+                  <span class="sessions-item-desc">Compare outdoor and studio maternity options, review pricing and availability, and book a comfortable, guided session before baby arrives.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-newborn.html">
+                  <span class="sessions-item-title">Newborn Sessions</span>
+                  <span class="sessions-item-desc">Explore studio and in-home newborn options, see what each includes, and choose the right session for your baby and family.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-milestone.html">
+                  <span class="sessions-item-title">Milestone Sessions</span>
+                  <span class="sessions-item-desc">Find first birthday and baby milestone options, including classic portraits and cake smash sessions, with galleries, pricing, and booking details.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item">
+                <a href="sessions-family.html">
+                  <span class="sessions-item-title">Family Sessions</span>
+                  <span class="sessions-item-desc">Compare outdoor and studio family sessions, review pricing and available dates, and book updated photos for this stage of your family.</span>
+                </a>
+              </div>
+              <div class="sessions-menu-item no-desc">
+                <a href="contact.html">
+                  <span class="sessions-item-title">Gift Cards</span>
+                </a>
+              </div>
+            </div>
+          </li>
+          
+          <!-- Portfolio Dropdown (Mega Menu) -->
+          <li class="dropdown mega-dropdown">
+            <a href="portfolio.html">Portfolio <span style="font-size: 0.65rem; vertical-align: middle;">▼</span></a>
+            <div class="mega-menu">
+              <div class="mega-menu-grid">
+                <div class="mega-menu-col">
+                  <h4>Maternity & Newborn</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=孕照">
+                        <span class="mega-menu-link-title">🤰 Maternity</span>
+                        <span class="mega-menu-link-desc">Pregnancy portraits.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=新生儿—满月">
+                        <span class="mega-menu-link-title">👶 Newborn</span>
+                        <span class="mega-menu-link-desc">Fleeting first days.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=Fresh 48">
+                        <span class="mega-menu-link-title">🏥 Fresh 48</span>
+                        <span class="mega-menu-link-desc">Hospital first hours.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=棚拍孕照|全家福">
+                        <span class="mega-menu-link-title">🏠 Studio Family</span>
+                        <span class="mega-menu-link-desc">Cozy studio bonds.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <h4>Milestones</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=百天布景写真">
+                        <span class="mega-menu-link-title">🧸 100-Day Studio</span>
+                        <span class="mega-menu-link-desc">Milestone setups.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=百天纪实">
+                        <span class="mega-menu-link-title">📷 100-Day Lifestyle</span>
+                        <span class="mega-menu-link-desc">Home lifestyle document.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=周岁布景写真">
+                        <span class="mega-menu-link-title">🎂 One-Year Studio</span>
+                        <span class="mega-menu-link-desc">First birthday setups.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=布景周岁礼">
+                        <span class="mega-menu-link-title">🎈 One-Year Ceremony</span>
+                        <span class="mega-menu-link-desc">Traditional birthday.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <h4>Family & Portrait</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=宝宝外景写真">
+                        <span class="mega-menu-link-title">👒 Baby Outdoor</span>
+                        <span class="mega-menu-link-desc">Toddlers in nature.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=纪实跟拍">
+                        <span class="mega-menu-link-title">🌿 Family Lifestyle</span>
+                        <span class="mega-menu-link-desc">Candid lifestyle bonds.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=棚拍写真">
+                        <span class="mega-menu-link-title">🖼️ Studio Portrait</span>
+                        <span class="mega-menu-link-desc">Clean, simple styling.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=Darcy 作品">
+                        <span class="mega-menu-link-title">🎨 Darcy Collection</span>
+                        <span class="mega-menu-link-desc">Curated editorial.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mega-menu-col">
+                  <h4>Mini & Specials</h4>
+                  <ul>
+                    <li>
+                      <a href="portfolio.html?cat=外景 Mini">
+                        <span class="mega-menu-link-title">🌲 Outdoor Mini</span>
+                        <span class="mega-menu-link-desc">Quick scenic shoots.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=Mini Session">
+                        <span class="mega-menu-link-title">⚡ Mini Session</span>
+                        <span class="mega-menu-link-desc">Studio highlights.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=季节限定">
+                        <span class="mega-menu-link-title">🌸 Seasonal Special</span>
+                        <span class="mega-menu-link-desc">Blossoms & tree farms.</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="portfolio.html?cat=领证·婚礼系列">
+                        <span class="mega-menu-link-title">💍 Wedding & Event</span>
+                        <span class="mega-menu-link-desc">Ceremonies & registers.</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-btn">
+        <a href="booking.html" class="btn btn-primary">Book a Shoot</a>
+      </div>
+      <div class="mobile-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-overlay"></div>
+    <div class="mobile-nav">
+      <ul class="mobile-nav-links">
+        <li>
+          <a href="#">Sessions</a>
+          <ul class="mobile-nav-submenu">
+            <li><a href="sessions-lavender.html">Lavender Farm Sessions</a></li>
+            <li><a href="sessions-maternity.html">Maternity Sessions</a></li>
+            <li><a href="sessions-newborn.html">Newborn Sessions</a></li>
+            <li><a href="sessions-milestone.html">Milestone Sessions</a></li>
+            <li><a href="sessions-family.html">Family Sessions</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="portfolio.html">Portfolio</a>
+          <ul class="mobile-nav-submenu">
+            <li><a href="portfolio.html?cat=孕照">Maternity</a></li>
+            <li><a href="portfolio.html?cat=新生儿—满月">Newborn</a></li>
+            <li><a href="portfolio.html?cat=宝宝外景写真">Baby Outdoor</a></li>
+            <li><a href="portfolio.html?cat=棚拍写真">Studio Portrait</a></li>
+            <li><a href="portfolio.html?cat=领证·婚礼系列">Wedding & Registry</a></li>
+          </ul>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Book a Shoot</a>
+    </div>
+  </header>
+
+  <!-- WIZARD AREA -->
+  <section class="section container" style="max-width: 950px; padding-top: clamp(140px, 12vw, 180px);">
+    
+    <!-- Wizard Steps Indicator -->
+    <div class="wizard-steps">
+      <div class="wizard-step-node active" id="step-node-1">
+        <div class="wizard-step-circle">1</div>
+        <span>Date & Time</span>
+      </div>
+      <div class="wizard-step-node" id="step-node-2">
+        <div class="wizard-step-circle">2</div>
+        <span>Information</span>
+      </div>
+      <div class="wizard-step-node" id="step-node-3">
+        <div class="wizard-step-circle">3</div>
+        <span>Terms</span>
+      </div>
+      <div class="wizard-step-node" id="step-node-4">
+        <div class="wizard-step-circle">4</div>
+        <span>Payment</span>
+      </div>
+    </div>
+
+    <!-- Booking Card -->
+    <div class="booking-wizard-card">
+
+      <!-- Dynamic Package Selector (shown if no parameter passed, or for manual change) -->
+      <div class="package-selector-wrapper">
+        <label for="package-select">Selected Photography Package:</label>
+        <select id="package-select" onchange="loadPackage(this.value)">
+          <option value="maternity-mini">Maternity Mini Session ($450)</option>
+          <option value="maternity-full" selected>Maternity Full Session ($750)</option>
+          <option value="newborn-petit">Petit Newborn Session ($550)</option>
+          <option value="newborn-full">Full Newborn Session ($850)</option>
+          <option value="family-petit">Petit Family Session ($450)</option>
+          <option value="family-full">Full Family Session ($750)</option>
+          <option value="lavender-mini">Lavender Farm Mini Session ($550)</option>
+          <option value="lavender-full">Lavender Farm Deluxe Session ($950)</option>
+          <option value="milestone-petit">Petit Milestone Session ($400)</option>
+          <option value="milestone-full">Full Milestone & Smash ($650)</option>
+        </select>
+      </div>
+
+      <!-- APPOINTMENT PACKAGE CARD -->
+      <div class="appointment-summary-card" id="appointment-card">
+        <img src="" alt="Session Thumbnail" class="appointment-summary-thumb" id="summary-thumb">
+        <div class="appointment-summary-info">
+          <h3 id="summary-title">Loading Package...</h3>
+          <div class="appointment-summary-price" id="summary-price">$0.00</div>
+          <div class="appointment-summary-desc" id="summary-desc">...</div>
+        </div>
+      </div>
+
+      <!-- STEP 1 PANEL: DATE & TIME -->
+      <div class="wizard-panel active" id="panel-1">
+        <h2 style="font-family: var(--font-serif); margin-bottom: 25px; font-size: 1.6rem; text-align: center;">Select Date & Time</h2>
+        
+        <div class="calendar-widget-grid">
+          <!-- Calendar side -->
+          <div>
+            <div class="calendar-month-header">
+              <button type="button" class="calendar-arrow-btn" id="prev-month" onclick="changeMonth(-1)">◀</button>
+              <div class="calendar-month-title" id="calendar-title">July 2026</div>
+              <button type="button" class="calendar-arrow-btn" id="next-month" onclick="changeMonth(1)">▶</button>
+            </div>
+            <div class="calendar-days-header">
+              <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+            </div>
+            <div class="calendar-days-grid" id="days-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Time slots side -->
+          <div class="time-slots-column">
+            <div class="time-slots-header" id="selected-day-label">Select a Date</div>
+            <div class="time-zone-label">TIME ZONE: PACIFIC TIME (GMT-07:00)</div>
+            <div class="time-slots-grid" id="time-slots-container">
+              <!-- Dynamically populated when date is selected -->
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Please choose a date from the calendar to view available slots.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 PANEL: YOUR INFORMATION -->
+      <div class="wizard-panel" id="panel-2">
+        <h2 style="font-family: var(--font-serif); margin-bottom: 30px; font-size: 1.6rem; text-align: center;">Your Information</h2>
+        
+        <form id="info-form">
+          <div class="form-fields-grid">
+            <div class="booking-field-group">
+              <label for="first-name">First name*</label>
+              <input type="text" id="first-name" required>
+            </div>
+            <div class="booking-field-group">
+              <label for="last-name">Last name*</label>
+              <input type="text" id="last-name" required>
+            </div>
+            <div class="booking-field-group">
+              <label for="phone">Phone*</label>
+              <div class="phone-input-wrap">
+                <select class="phone-flag-select">
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+86">🇨🇳 +86</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+1">🇨🇦 +1</option>
+                </select>
+                <input type="tel" id="phone" placeholder="(555) 000-0000" required>
+              </div>
+            </div>
+            <div class="booking-field-group">
+              <label for="email">Email*</label>
+              <input type="email" id="email" required placeholder="name@example.com">
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="address">Address*</label>
+              <input type="text" id="address" required placeholder="Street address, Apt, Suite">
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="city-state-zip">City, State, Zip*</label>
+              <input type="text" id="city-state-zip" required placeholder="e.g. Seattle, WA 98101">
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="participating-adults">Please list other adults who will be participating: name and relationship to you*</label>
+              <textarea id="participating-adults" required placeholder="e.g. Spouse John Doe, Grandmother Sarah Smith"></textarea>
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="participating-children">Please list your children who will be participating: name and age*</label>
+              <textarea id="participating-children" required placeholder="e.g. Tommy (3 years), Lily (6 months)"></textarea>
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="participating-pets">Please list your pets who will be participating: name and type (Optional)</label>
+              <textarea id="participating-pets" placeholder="e.g. Buddy (Golden Retriever dog)"></textarea>
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="booking-notes">Notes: anything else you would like me to know (Optional)</label>
+              <textarea id="booking-notes" placeholder="Write any wardrobe requests, session preferences, or notes here..."></textarea>
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="referral">How did you hear about me?</label>
+              <input type="text" id="referral" placeholder="e.g. Google, Instagram, Friend referral">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 3 PANEL: TERMS OF SERVICE -->
+      <div class="wizard-panel" id="panel-3">
+        <h2 style="font-family: var(--font-serif); margin-bottom: 30px; font-size: 1.6rem; text-align: center;" id="terms-title-text">Terms of Service</h2>
+        
+        <div class="terms-scroll-area" id="terms-box">
+          <!-- Populated dynamically based on session terms -->
+        </div>
+
+        <label class="terms-checkbox-wrap">
+          <input type="checkbox" id="terms-checkbox" onchange="toggleTermsAgreement(this.checked)">
+          I have read and agree to the terms above*
+        </label>
+      </div>
+
+      <!-- STEP 4 PANEL: DEPOSIT PAYMENT -->
+      <div class="wizard-panel" id="panel-4">
+        <h2 style="font-family: var(--font-serif); margin-bottom: 30px; font-size: 1.6rem; text-align: center;">Reserve Your Session</h2>
+        
+        <div class="payment-summary-block">
+          <div class="payment-summary-row">
+            <span>Selected Session:</span>
+            <span id="pay-session-name">Maternity Full Session</span>
+          </div>
+          <div class="payment-summary-row">
+            <span>Date & Time:</span>
+            <span id="pay-date-time">Thursday, July 9, 2026 at 7:30 PM</span>
+          </div>
+          <div class="payment-summary-row">
+            <span>Full Session Price:</span>
+            <span id="pay-total-price">$750.00</span>
+          </div>
+          <div class="payment-summary-row">
+            <span>Non-Refundable Deposit Due Now:</span>
+            <span style="color: var(--accent-gold); font-weight: 600;">$100.00</span>
+          </div>
+          <div class="payment-summary-row">
+            <span>Remaining Balance (Due Session Day):</span>
+            <span id="pay-remaining-price">$650.00</span>
+          </div>
+        </div>
+
+        <form id="payment-form">
+          <div class="form-fields-grid">
+            <div class="booking-field-group form-field-full">
+              <label for="cardholder-name">Cardholder Name*</label>
+              <input type="text" id="cardholder-name" required placeholder="e.g. John Doe">
+            </div>
+            <div class="booking-field-group form-field-full">
+              <label for="card-number">Card Number*</label>
+              <input type="text" id="card-number" required placeholder="•••• •••• •••• ••••" maxlength="19">
+            </div>
+            <div class="booking-field-group">
+              <label for="card-expiry">Expiration Date*</label>
+              <input type="text" id="card-expiry" required placeholder="MM/YY" maxlength="5">
+            </div>
+            <div class="booking-field-group">
+              <label for="card-cvv">CVV*</label>
+              <input type="text" id="card-cvv" required placeholder="123" maxlength="4">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- SUCCESS PANEL -->
+      <div class="wizard-panel" id="panel-success">
+        <div class="booking-success-block">
+          <div class="booking-success-icon">✓</div>
+          <h2 style="font-family: var(--font-serif); margin-bottom: 15px; font-size: 2rem;">Booking Confirmed!</h2>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 30px;">Thank you for reserving your session. A confirmation email and deposit invoice have been sent to you.</p>
+          
+          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 25px; max-width: 550px; margin: 0 auto 40px auto; text-align: left; font-size: 0.95rem; line-height: 1.6;">
+            <p><strong>Confirmation Number:</strong> <span style="font-family: monospace; font-size: 1rem; color: var(--accent-gold);" id="success-conf-num">LSP-2026-X839</span></p>
+            <p><strong>Session:</strong> <span id="success-session-name">Maternity Full Session</span></p>
+            <p><strong>Scheduled Time:</strong> <span id="success-scheduled-time">Thursday, July 9, 2026 at 7:30 PM</span></p>
+            <p><strong>Deposit Paid:</strong> $100.00 (Via Mock Card)</p>
+            <p><strong>Remaining Balance:</strong> <span id="success-remaining-price">$650.00</span> (Due on session day)</p>
+          </div>
+
+          <a href="index.html" class="btn btn-primary">Return to Home Page</a>
+        </div>
+      </div>
+
+      <!-- WIZARD ACTION BAR -->
+      <div class="wizard-action-bar" id="wizard-buttons">
+        <button type="button" class="btn btn-secondary" id="btn-back" onclick="navigateStep(-1)" style="visibility: hidden;">Back</button>
+        <button type="button" class="btn btn-primary" id="btn-next" onclick="navigateStep(1)" disabled>Next</button>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRE-FOOTER CTA -->
+  <section class="prefooter-cta">
+    <div class="prefooter-mosaic">
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/孕照/Alviso Marina _ 盐湖 (Alviso Marina)/001_work_579008_1g0c9_250731_193204_7070_7eo4c.jpeg')"></div>
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/新生儿—满月/Fresh 48 (Fresh48)/001_work_579008_613nz_260622_185439_0690_3dmf0.jpeg')"></div>
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/Darcy 作品/Ethan 湖边家庭照 (Ethan 湖边纪实)/001_work_579008_51njy_260622_231500_9940_nu7cg.jpeg')"></div>
+      <div class="prefooter-img-panel" style="background-image:url('taozijia-images/周岁布景写真/周岁女宝-限周岁，可上门/001_work_579008_e5ubj_260622_222816_0860_deu7u.jpeg')"></div>
+    </div>
+    <div class="prefooter-overlay">
+      <p class="prefooter-eyebrow">EXPLORE OUR WORK</p>
+      <h2 class="prefooter-heading">See the Stories We've Already Told</h2>
+      <a href="portfolio.html" class="btn btn-outline-white">View Portfolio</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-logo-col">
+        <img src="logo.png" alt="Lana Sky Logo" class="logo">
+        <div class="footer-divider"></div>
+        <p>Timeless photographs. Real connections. Preserving your story with warmth, artistry, and heart.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="sessions-maternity.html">What to Expect</a></li>
+          <li><a href="sessions-newborn.html">Wardrobe Guide</a></li>
+          <li><a href="sessions-family.html">FAQs</a></li>
+          <li><a href="contact.html">Gift Cards</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Service Areas</h4>
+        <ul>
+          <li><a href="contact.html#areas">Seattle</a></li>
+          <li><a href="contact.html#areas">Bellevue</a></li>
+          <li><a href="contact.html#areas">Kirkland</a></li>
+          <li><a href="contact.html#areas">Redmond</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact-col">
+        <h4>Let's Connect</h4>
+        <p><strong>Email:</strong> hello@lanaskyphotography.com</p>
+        <p><strong>WeChat:</strong> YYPhotography2022</p>
+        <p><strong>Locations:</strong> Serving Seattle & the Eastside and surrounding areas</p>
+        <div class="footer-socials">
+          <a href="#" title="WeChat">WeChat</a>
+          <a href="#" title="Redbook">Redbook</a>
+          <a href="#" title="Weibo">Weibo</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Taozijia Photography. All Rights Reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Packages Database
+    const packages = {
+      'maternity-mini': {
+        title: 'Maternity Mini Session – Studio or Select Outdoor Locations',
+        price: 450,
+        priceStr: '$450.00',
+        desc: '• Up to 20 minutes of shooting time • 10 digital hand-edited images of your choice with print release • Proofing gallery of 30+ files • Select outdoor or studio settings • Planning & styling guidance included',
+        image: 'taozijia-images/孕照/Alviso Marina _ 盐湖 (Alviso Marina)/001_work_579008_1g0c9_250731_193204_7070_7eo4c.jpeg',
+        termsTitle: 'Terms of Service: Maternity Outdoor Session (Updated 5/5/26)'
+      },
+      'maternity-full': {
+        title: 'Maternity Full Session – Outdoor or Studio Setting',
+        price: 750,
+        priceStr: '$750.00',
+        desc: '• Up to 60 minutes of shooting time • 25 digital hand-edited images of your choice with print release • Proofing gallery of 60+ files • Full access to client wardrobe • Outdoor or studio setting • Complete planning & styling guidance',
+        image: 'taozijia-images/孕照/Alviso Marina _ 盐湖 (Alviso Marina)/001_work_579008_1g0c9_250731_193204_7070_7eo4c.jpeg',
+        termsTitle: 'Terms of Service: Maternity Outdoor Session (Updated 5/5/26)'
+      },
+      'newborn-petit': {
+        title: 'Petit Newborn Session – Neutral Wrap Studio Session',
+        price: 550,
+        priceStr: '$550.00',
+        desc: '• Up to 40 minutes of shooting time • 10 digital hand-edited images with print release • Proofing gallery of 30+ files • Studio setting only • Neutral wraps and minimal props included • Baby-led relaxed pace',
+        image: 'taozijia-images/新生儿—满月/Fresh 48 (Fresh48)/001_work_579008_613nz_260622_185439_0690_3dmf0.jpeg',
+        termsTitle: 'Terms of Service: Newborn Session (Updated 5/5/26)'
+      },
+      'newborn-full': {
+        title: 'Full Newborn Session – Studio or In-Home Storytelling',
+        price: 850,
+        priceStr: '$850.00',
+        desc: '• Up to 90 minutes of shooting time • 25 digital hand-edited images with print release • Proofing gallery of 70+ files • Studio or In-Home settings • Wardrobe access included • Complete family, parent & sibling poses included',
+        image: 'taozijia-images/新生儿—满月/Fresh 48 (Fresh48)/001_work_579008_613nz_260622_185439_0690_3dmf0.jpeg',
+        termsTitle: 'Terms of Service: Newborn Session (Updated 5/5/26)'
+      },
+      'family-petit': {
+        title: 'Petit Family Session – Quick Studio or Scenic Outdoor',
+        price: 450,
+        priceStr: '$450.00',
+        desc: '• Up to 20 minutes of shooting time • 10 digital hand-edited images with print release • Proofing gallery of 30+ files • Select studio or outdoor settings • Immediate family members only • Fast-paced fun environment',
+        image: 'taozijia-images/宝宝外景写真/宝宝外景写真/001_work_579008_jkxqx_260615_185738_2210_4fads.jpeg',
+        termsTitle: 'Terms of Service: Family Session (Updated 5/5/26)'
+      },
+      'family-full': {
+        title: 'Full Family Session – Scenic Outdoor Storytelling',
+        price: 750,
+        priceStr: '$750.00',
+        desc: '• Up to 60 minutes of shooting time • 25 digital hand-edited images with print release • Proofing gallery of 70+ files • Outdoor or studio setting • Wardrobe access & styling guidance • Child-led candid and guided family portraits',
+        image: 'taozijia-images/Darcy 作品/Ethan 湖边家庭照 (Ethan 湖边纪实)/001_work_579008_51njy_260622_231500_9940_nu7cg.jpeg',
+        termsTitle: 'Terms of Service: Family Session (Updated 5/5/26)'
+      },
+      'lavender-mini': {
+        title: 'Lavender Farm Mini Session – Sequim Blossom Special',
+        price: 550,
+        priceStr: '$550.00',
+        desc: '• Up to 20 minutes of shooting time • 10 digital hand-edited images of your choice with print release • Proofing gallery of 40 to 60 files • Sequim Lavender Farm location • Session prep & styling help included • 7-day turnaround',
+        image: 'taozijia-images/季节限定/filoli3 月上旬 (filoli 花季 3 月)/012_work_579008_tqx9u_260313_201328_5180_8xzk7.jpeg',
+        termsTitle: 'Terms of Service: Lavender Farm Session (Updated 5/5/26)'
+      },
+      'lavender-full': {
+        title: 'Lavender Farm Deluxe Session – Sequim Blossom Storytelling',
+        price: 950,
+        priceStr: '$950.00',
+        desc: '• Up to 60 minutes of shooting time • 25 digital hand-edited images of your choice with print release • Proofing gallery of 80 to 100 files • Sequim Lavender Farm location • Session prep & styling help included • 7-day turnaround',
+        image: 'taozijia-images/季节限定/filoli3 月上旬 (filoli 花季 3 月)/012_work_579008_tqx9u_260313_201328_5180_8xzk7.jpeg',
+        termsTitle: 'Terms of Service: Lavender Farm Session (Updated 5/5/26)'
+      },
+      'milestone-petit': {
+        title: 'Petit Milestone Session – Studio Classic developmental stage',
+        price: 400,
+        priceStr: '$400.00',
+        desc: '• Up to 20 minutes of shooting time • 10 digital hand-edited images with print release • Proofing gallery of 30+ files • Studio neutral setup • Outfits from client wardrobe included • Ideal for sitting/standing portraits',
+        image: 'taozijia-images/百天布景写真/百天-半岁布景写真女宝/001_work_579008_zovlu_260629_135718_3960_nvi8w.jpeg',
+        termsTitle: 'Terms of Service: Milestone Session (Updated 5/5/26)'
+      },
+      'milestone-full': {
+        title: 'Full Milestone & Smash – Classic Portrait & Cake Smash',
+        price: 650,
+        priceStr: '$650.00',
+        desc: '• Up to 45 minutes of shooting time • 25 digital hand-edited images with print release • Proofing gallery of 65+ files • Classic portrait set + Cake smash set • Bath tub splash finish included • Wardrobe access & props included',
+        image: 'taozijia-images/周岁布景写真/周岁女宝-限周岁，可上门/001_work_579008_e5ubj_260622_222816_0860_deu7u.jpeg',
+        termsTitle: 'Terms of Service: Milestone Session (Updated 5/5/26)'
+      }
+    };
+
+    const termsTemplate = `
+      <h4>Booking and Deposit:</h4>
+      <ul>
+        <li>A $100 non-refundable deposit is required to reserve your session.</li>
+        <li>If weather conditions require rescheduling (see Section Safety, Weather, and Liability), and we can’t find a new date that works for you, I’ll refund your deposit. Overcast skies and regular seasonal changes are not valid reasons for rescheduling.</li>
+        <li>Client reschedule: Please give at least 72 hours’ notice to retain your deposit.</li>
+      </ul>
+
+      <h4>Payment:</h4>
+      <ul>
+        <li>The remaining balance is due on the session day.</li>
+        <li>You’ll receive an invoice reminder one day prior; all major credit cards are accepted.</li>
+        <li>The proof gallery is released after payment is received in full.</li>
+      </ul>
+
+      <h4>Arrival and Timing:</h4>
+      <ul>
+        <li>Session start time may be adjusted by 30 minutes for better light and weather, so please keep your schedule flexible.</li>
+        <li>Sessions begin at the scheduled start time. If you arrive late, we’ll photograph for the remaining time in your booking.</li>
+        <li>Sessions are not extended due to late arrival. No refunds or credits will be issued for unused time.</li>
+      </ul>
+
+      <h4>Safety, Weather, and Liability:</h4>
+      <ul>
+        <li>I actively monitor weather forecasts. I’ll notify you 12–24 hours in advance if we need to reschedule due to steady rain, high winds, or other unsafe conditions.</li>
+        <li>Clients and their parties attend sessions at their own risk.</li>
+        <li>While I prioritize safety and will guide you away from hazardous areas, I am not liable for injuries, accidents, or property damage that occur during your session.</li>
+        <li>Please supervise children at all times.</li>
+      </ul>
+
+      <h4>Style and Creative Direction:</h4>
+      <ul>
+        <li>Your images will reflect the posing and editing style shown in the sample images for your session type on my website.</li>
+        <li>Every family is unique, so your images may differ from the sample gallery.</li>
+        <li>Results depend on everyone’s cooperation and willingness to participate. I’m not liable for missed shots due to factors outside my control (e.g., unshared preferences, unforeseen conditions).</li>
+        <li>I will make every reasonable effort to engage your child and capture natural expressions. However, children’s moods and cooperation levels vary, and no particular pose, expression, or smile can be guaranteed. I am not responsible for lack of smiles, grumpy faces, or other facial expressions beyond my control.</li>
+        <li>Locations change from season to season; I can’t guarantee your photos will look exactly like the sample gallery.</li>
+        <li>By booking, you grant me complete creative control over posing and editing.</li>
+      </ul>
+
+      <h4>Proofs, Selection, and File Retention:</h4>
+      <ul>
+        <li>You’ll receive your proof gallery within 4 days after your session.</li>
+        <li>You’ll have 7 days from receiving your proof gallery link to select your images.</li>
+        <li>If selections are made after 7 days, a 7-day turnaround for final images is no longer guaranteed.</li>
+        <li>After final delivery, I retain the RAW and edited files for six months. Please back up your files.</li>
+      </ul>
+
+      <h4>Edits and Upgrades:</h4>
+      <ul>
+        <li>Unedited (RAW) images are not provided.</li>
+        <li>You can purchase additional hand-edited photos for $20 each.</li>
+        <li>You can purchase an Entire Gallery upgrade (with standard color correction) for $200.</li>
+        <li>Hand-editing (retouching) includes basic skin smoothing, removal of blemishes/bruises, and a few flyaways.</li>
+        <li>Advanced edits (billed at $100/hour, 1-hour minimum) include: head swaps, slimming, removal of items in pockets (phone/keys), excessive flyaways, makeup/hair corrections, removal of clothing folds/stains, wardrobe-malfunction adjustments (e.g., visible bra straps/underclothing), and removal of grass/mud/wet stains on shoes.</li>
+      </ul>
+
+      <h4>Image Delivery:</h4>
+      <ul>
+        <li>Final images are delivered via an online gallery in two sets.</li>
+        <li>High-resolution files with print release for printing</li>
+        <li>Web-resolution files (with small logo watermark in bottom corner) for online use</li>
+      </ul>
+
+      <h4>Blackout Dates and Unexpected Delays:</h4>
+      <ul>
+        <li>Blackout dates: These are planned studio closures for school breaks and holidays. During these periods, I don’t shoot or deliver images, so turnaround times are extended. 2026 blackout dates: February 13–20, April 11–15, June 18–28, November 23–27, and December 20–27.</li>
+        <li>Rare exceptions: Illness or unforeseen family emergencies may affect delivery timelines. If this occurs, I’ll notify you promptly with a revised ETA.</li>
+      </ul>
+
+      <h4>Copyright:</h4>
+      <ul>
+        <li>All copyrights for images from your session are held exclusively by Lana Sky Photography.</li>
+      </ul>
+
+      <h4>Client Image License and Print Release:</h4>
+      <ul>
+        <li>You’ll receive high-resolution images with a release for personal use. This allows you to print and share the photos for personal use (e.g., family albums, holiday cards, social media with credit).</li>
+        <li>Commercial use or selling of images without written permission is strictly prohibited.</li>
+        <li>You’re welcome to print through any lab; however, I cannot guarantee color accuracy or print quality from third-party labs. For best results, please use the vendors that I recommend.</li>
+      </ul>
+
+      <h4>Model Release and Privacy:</h4>
+      <ul>
+        <li>You grant permission for me to use your images for the website, portfolio, social media, marketing, and photography contests. I do not sell client images as stock photography.</li>
+        <li>As a small business, I rely on real client photos to showcase my work rather than hiring models. However, your privacy comes first. If you prefer to keep your images private, please indicate this in the Notes field above, and I will not use your photos in any marketing or portfolio materials.</li>
+        <li>Once images are online, third-party sharing is outside my control.</li>
+      </ul>
+    `;
+
+    // Wizard State
+    let currentStep = 1;
+    let selectedPackageKey = 'maternity-full';
+    let selectedDate = null;
+    let selectedTime = null;
+    
+    // Calendar variables (Targeting July 2026 per screenshot)
+    let currentCalYear = 2026;
+    let currentCalMonth = 6; // 0-indexed, so 6 is July
+    
+    // Active dates for July 2026 matching screenshot (9 is selected, others clickable: 14, 15, 17, 20, 24, 31)
+    const availableDatesJuly2026 = [9, 14, 15, 17, 20, 24, 31];
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      // Parse Query string
+      const params = new URLSearchParams(window.location.search);
+      const typeParam = params.get('type');
+      if (typeParam && packages[typeParam]) {
+        selectedPackageKey = typeParam;
+        document.getElementById('package-select').value = typeParam;
+      }
+      loadPackage(selectedPackageKey);
+      renderCalendar();
+      updateWizardButtons();
+    });
+
+    function loadPackage(key) {
+      selectedPackageKey = key;
+      const pkg = packages[key];
+      
+      // Update Hero appointment Card
+      document.getElementById('summary-thumb').src = pkg.image;
+      document.getElementById('summary-title').innerText = pkg.title;
+      document.getElementById('summary-price').innerText = pkg.priceStr;
+      document.getElementById('summary-desc').innerText = pkg.desc;
+
+      // Update payment summaries
+      document.getElementById('pay-session-name').innerText = pkg.title;
+      document.getElementById('pay-total-price').innerText = pkg.priceStr;
+      
+      const deposit = 100;
+      const remaining = pkg.price - deposit;
+      document.getElementById('pay-remaining-price').innerText = '$' + remaining.toFixed(2);
+      
+      // For Step 3 Terms
+      document.getElementById('terms-title-text').innerText = pkg.termsTitle;
+      document.getElementById('terms-box').innerHTML = `<h3>${pkg.termsTitle}</h3>` + termsTemplate;
+    }
+
+    // Wizard panel navigation
+    function navigateStep(direction) {
+      if (direction === 1 && !validateCurrentStep()) {
+        return;
+      }
+
+      // Hide current panel
+      document.getElementById(`panel-${currentStep}`).classList.remove('active');
+      document.getElementById(`step-node-${currentStep}`).classList.remove('active');
+      if (direction === 1) {
+        document.getElementById(`step-node-${currentStep}`).classList.add('completed');
+      }
+
+      currentStep += direction;
+
+      // Show new panel
+      document.getElementById(`panel-${currentStep}`).classList.add('active');
+      document.getElementById(`step-node-${currentStep}`).classList.add('active');
+      document.getElementById(`step-node-${currentStep}`).classList.remove('completed');
+
+      updateWizardButtons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateCurrentStep() {
+      if (currentStep === 1) {
+        if (!selectedDate || !selectedTime) {
+          alert('Please select both a date and time to proceed.');
+          return false;
+        }
+        return true;
+      }
+
+      if (currentStep === 2) {
+        const form = document.getElementById('info-form');
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return false;
+        }
+        return true;
+      }
+
+      if (currentStep === 3) {
+        const agreed = document.getElementById('terms-checkbox').checked;
+        if (!agreed) {
+          alert('You must read and agree to the Terms of Service to proceed.');
+          return false;
+        }
+        return true;
+      }
+
+      if (currentStep === 4) {
+        const form = document.getElementById('payment-form');
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return false;
+        }
+        // Process Mock Payment & complete booking!
+        completeBooking();
+        return false; // prevent standard wizard step increment
+      }
+
+      return true;
+    }
+
+    function updateWizardButtons() {
+      const btnBack = document.getElementById('btn-back');
+      const btnNext = document.getElementById('btn-next');
+
+      if (currentStep === 1) {
+        btnBack.style.visibility = 'hidden';
+        btnNext.innerText = 'Next';
+        btnNext.disabled = (!selectedDate || !selectedTime);
+      } else {
+        btnBack.style.visibility = 'visible';
+        btnNext.disabled = false;
+        
+        if (currentStep === 2) {
+          btnNext.innerText = 'Next';
+        } else if (currentStep === 3) {
+          btnNext.innerText = 'Next';
+          btnNext.disabled = !document.getElementById('terms-checkbox').checked;
+        } else if (currentStep === 4) {
+          btnNext.innerText = 'Submit Booking & Pay $100';
+        }
+      }
+    }
+
+    function toggleTermsAgreement(agreed) {
+      updateWizardButtons();
+    }
+
+    function completeBooking() {
+      // Hide buttons
+      document.getElementById('wizard-buttons').style.display = 'none';
+      
+      // Update success summaries
+      const pkg = packages[selectedPackageKey];
+      document.getElementById('success-session-name').innerText = pkg.title;
+      document.getElementById('success-scheduled-time').innerText = formatBookingDateTime();
+      document.getElementById('success-remaining-price').innerText = '$' + (pkg.price - 100).toFixed(2);
+      
+      // Generate a mock confirmation number
+      const confNum = 'LSP-2026-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('success-conf-num').innerText = confNum;
+
+      // Hide all panels, show success panel
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`panel-${i}`).classList.remove('active');
+        document.getElementById(`step-node-${i}`).classList.add('completed');
+      }
+      document.getElementById('panel-success').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function formatBookingDateTime() {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      return `${months[currentCalMonth]} ${selectedDate}, ${currentCalYear} at ${selectedTime}`;
+    }
+
+    // Calendar logic
+    function changeMonth(direction) {
+      currentCalMonth += direction;
+      if (currentCalMonth < 0) {
+        currentCalMonth = 11;
+        currentCalYear--;
+      } else if (currentCalMonth > 11) {
+        currentCalMonth = 0;
+        currentCalYear++;
+      }
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('calendar-title').innerText = `${months[currentCalMonth]} ${currentCalYear}`;
+
+      // Disable previous month arrow button if before July 2026 (keep view realistic to screenshot)
+      const prevBtn = document.getElementById('prev-month');
+      if (currentCalYear < 2026 || (currentCalYear === 2026 && currentCalMonth <= 6)) {
+        prevBtn.disabled = true;
+      } else {
+        prevBtn.disabled = false;
+      }
+
+      const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
+      const numDays = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+      
+      const grid = document.getElementById('days-grid');
+      grid.innerHTML = '';
+
+      // Blank spaces for offset
+      for (let i = 0; i < firstDay; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell inactive';
+        grid.appendChild(cell);
+      }
+
+      // Populate days
+      for (let day = 1; day <= numDays; day++) {
+        const cell = document.createElement('div');
+        cell.innerText = day;
+        
+        let isClickable = false;
+        
+        // Mock only July 2026 clickable dates to match screenshot exactly
+        if (currentCalYear === 2026 && currentCalMonth === 6) {
+          if (availableDatesJuly2026.includes(day)) {
+            isClickable = true;
+          }
+        } else {
+          // Other months: standard mockup pattern (Wednesdays and Fridays active)
+          const weekday = new Date(currentCalYear, currentCalMonth, day).getDay();
+          if (weekday === 3 || weekday === 5) {
+            isClickable = true;
+          }
+        }
+
+        if (isClickable) {
+          cell.className = 'calendar-day-cell clickable';
+          cell.onclick = () => selectDate(day);
+          
+          if (selectedDate === day && currentCalYear === 2026 && currentCalMonth === 6) {
+            cell.classList.add('selected');
+          }
+        } else {
+          cell.className = 'calendar-day-cell inactive';
+        }
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function selectDate(day) {
+      // Remove selected highlight from current selected day
+      const prevSelected = document.querySelector('.calendar-day-cell.selected');
+      if (prevSelected) {
+        prevSelected.classList.remove('selected');
+      }
+
+      selectedDate = day;
+      
+      // Add selected highlight
+      renderCalendar(); // Redraws to highlight selected day
+
+      // Update right-hand labels
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const dateObj = new Date(currentCalYear, currentCalMonth, day);
+      const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      
+      document.getElementById('selected-day-label').innerText = `${weekdays[dateObj.getDay()]}, ${months[currentCalMonth]} ${day}`;
+
+      // Populate time slots
+      const slotsContainer = document.getElementById('time-slots-container');
+      slotsContainer.innerHTML = '';
+
+      // Standard Mock Time slots
+      const slots = ['9:00 AM', '11:30 AM', '2:00 PM', '4:30 PM', '7:30 PM'];
+      slots.forEach(time => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'time-slot-btn';
+        if (selectedTime === time) {
+          btn.classList.add('selected');
+        }
+        btn.innerText = time;
+        btn.onclick = () => selectTime(time, btn);
+        slotsContainer.appendChild(btn);
+      });
+
+      updateWizardButtons();
+    }
+
+    function selectTime(time, element) {
+      // Remove selected from other slots
+      const prevSlot = document.querySelector('.time-slot-btn.selected');
+      if (prevSlot) {
+        prevSlot.classList.remove('selected');
+      }
+
+      selectedTime = time;
+      element.classList.add('selected');
+
+      // Update summary for payment
+      document.getElementById('pay-date-time').innerText = formatBookingDateTime();
+
+      updateWizardButtons();
+    }
+  </script>
+
+  <!-- Mobile Toggle Menu JS -->
+  <script src="js/interactive.js"></script>
+</body>
+</html>
