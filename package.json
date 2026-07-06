@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "AKGALAXY02 Static Website",
   "scripts": {
-    "build": "mkdir -p dist && cp -r index.html about.html apple-touch-icon.png blog-detail.html blog.html booking.html case-detail.html contact.html favicon.ico logo.png portfolio.html sessions-family.html sessions-lavender.html sessions-maternity.html sessions-milestone.html sessions-newborn.html css data images js dist/"
+    "build": "mkdir -p dist dist/images && cp -r index.html about.html apple-touch-icon.png blog-detail.html blog.html booking.html case-detail.html contact.html favicon.ico logo.png portfolio.html sessions-family.html sessions-lavender.html sessions-maternity.html sessions-milestone.html sessions-newborn.html css data js dist/"
   },
   "author": "Taozijia",
   "license": "ISC"
