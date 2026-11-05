@@ -278,6 +278,38 @@
     .time-slot-btn:hover {
       border-color: var(--text-primary);
     }
+    
+    .time-slot-btn.booked,
+    .time-slot-btn.blocked {
+      background-color: #F5F3F0 !important;
+      border-color: #E6E2DC !important;
+      color: #A8A199 !important;
+      cursor: not-allowed !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      opacity: 0.75 !important;
+    }
+    .time-slot-btn.booked .slot-time,
+    .time-slot-btn.blocked .slot-time {
+      text-decoration: line-through;
+    }
+    .time-slot-btn.booked:hover,
+    .time-slot-btn.blocked:hover {
+      border-color: #E6E2DC !important;
+    }
+    .slot-booked-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #EAE6DF;
+      color: #7D756C;
+      text-decoration: none !important;
+    }
+
     .time-slot-btn.selected {
       border-color: var(--accent-gold);
       background-color: var(--accent-light);
@@ -1754,7 +1786,9 @@
       return `${months[currentCalMonth]} ${selectedDate}, ${currentCalYear} at ${selectedTime}`;
     }
 
-    // Calendar logic
+    // ================= Dynamic Calendar & Real-Time Availability =================
+    let monthAvailabilityCache = {};
+
     function changeMonth(direction) {
       currentCalMonth += direction;
       if (currentCalMonth < 0) {
@@ -1764,16 +1798,35 @@
         currentCalMonth = 0;
         currentCalYear++;
       }
+      selectedDate = null;
+      selectedTime = null;
+      document.getElementById('time-slots-container').innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Please choose a date from the calendar to view available slots.</p>';
+      document.getElementById('selected-day-label').innerText = 'Select a Date';
+      updateWizardButtons();
       renderCalendar();
     }
 
-    function renderCalendar() {
+    async function fetchMonthAvailability(year, month) {
+      try {
+        const res = await fetch(`/api/calendar/month-availability?year=${year}&month=${month}`);
+        if (res.ok) {
+          const data = await res.json();
+          return data.days || {};
+        }
+      } catch (err) {
+        console.warn('Could not fetch month availability from API, using fallback:', err);
+      }
+      return null;
+    }
+
+    async function renderCalendar() {
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       document.getElementById('calendar-title').innerText = `${months[currentCalMonth]} ${currentCalYear}`;
 
-      // Disable previous month arrow button if before July 2026 (keep view realistic to screenshot)
       const prevBtn = document.getElementById('prev-month');
-      if (currentCalYear < 2026 || (currentCalYear === 2026 && currentCalMonth <= 6)) {
+      // Allow browsing current year onwards
+      const now = new Date();
+      if (currentCalYear < now.getFullYear() || (currentCalYear === now.getFullYear() && currentCalMonth < now.getMonth())) {
         prevBtn.disabled = true;
       } else {
         prevBtn.disabled = false;
@@ -1792,23 +1845,29 @@
         grid.appendChild(cell);
       }
 
+      // Fetch availability from backend API
+      const daysData = await fetchMonthAvailability(currentCalYear, currentCalMonth + 1);
+
       // Populate days
       for (let day = 1; day <= numDays; day++) {
         const cell = document.createElement('div');
         cell.innerText = day;
         
         let isClickable = false;
-        
-        // Mock only July 2026 clickable dates to match screenshot exactly
-        if (currentCalYear === 2026 && currentCalMonth === 6) {
-          if (availableDatesJuly2026.includes(day)) {
+        const dayInfo = daysData ? daysData[day] : null;
+
+        if (dayInfo) {
+          // Real-time backend calendar availability
+          if (dayInfo.available) {
             isClickable = true;
           }
         } else {
-          // Other months: standard mockup pattern (Wednesdays and Fridays active)
-          const weekday = new Date(currentCalYear, currentCalMonth, day).getDay();
-          if (weekday === 3 || weekday === 5) {
-            isClickable = true;
+          // Fallback if backend offline: active dates
+          if (currentCalYear === 2026 && currentCalMonth === 6) {
+            if ([9, 14, 15, 17, 20, 24, 31].includes(day)) isClickable = true;
+          } else {
+            const weekday = new Date(currentCalYear, currentCalMonth, day).getDay();
+            if (weekday === 3 || weekday === 5) isClickable = true;
           }
         }
 
@@ -1816,53 +1875,107 @@
           cell.className = 'calendar-day-cell clickable';
           cell.onclick = () => selectDate(day);
           
-          if (selectedDate === day && currentCalYear === 2026 && currentCalMonth === 6) {
+          if (selectedDate === day) {
             cell.classList.add('selected');
           }
         } else {
           cell.className = 'calendar-day-cell inactive';
+          if (dayInfo && dayInfo.isBlocked) {
+            cell.title = 'Studio closed';
+          } else if (dayInfo && dayInfo.totalSlotsCount > 0 && dayInfo.openSlotsCount === 0) {
+            cell.title = 'Fully booked';
+            cell.style.color = '#BDBDBD';
+          }
         }
 
         grid.appendChild(cell);
       }
     }
 
-    function selectDate(day) {
-      // Remove selected highlight from current selected day
+    async function selectDate(day) {
       const prevSelected = document.querySelector('.calendar-day-cell.selected');
       if (prevSelected) {
         prevSelected.classList.remove('selected');
       }
 
       selectedDate = day;
+      selectedTime = null; // reset time when new date picked
+      updateWizardButtons();
       
-      // Add selected highlight
-      renderCalendar(); // Redraws to highlight selected day
+      // Highlight selected cell
+      const cells = document.querySelectorAll('.calendar-day-cell.clickable');
+      cells.forEach(c => {
+        if (parseInt(c.innerText) === day) c.classList.add('selected');
+      });
 
-      // Update right-hand labels
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       const dateObj = new Date(currentCalYear, currentCalMonth, day);
       const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       
       document.getElementById('selected-day-label').innerText = `${weekdays[dateObj.getDay()]}, ${months[currentCalMonth]} ${day}`;
 
-      // Populate time slots
       const slotsContainer = document.getElementById('time-slots-container');
-      slotsContainer.innerHTML = '';
+      slotsContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Checking slot availability...</p>';
 
-      // Standard Mock Time slots
-      const slots = ['9:00 AM', '11:30 AM', '2:00 PM', '4:30 PM', '7:30 PM'];
-      slots.forEach(time => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'time-slot-btn';
-        if (selectedTime === time) {
-          btn.classList.add('selected');
+      const dateStr = `${currentCalYear}-${String(currentCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+      try {
+        const res = await fetch(`/api/calendar/slots?date=${dateStr}`);
+        const data = await res.json();
+
+        slotsContainer.innerHTML = '';
+
+        if (data.isBlocked || !data.slots || data.slots.length === 0) {
+          slotsContainer.innerHTML = `<p style="color: var(--text-secondary); font-size: 0.9rem; padding: 15px 0;">No sessions available on this date (${data.reason || 'Closed'}). Please select another date.</p>`;
+          return;
         }
-        btn.innerText = time;
-        btn.onclick = () => selectTime(time, btn);
-        slotsContainer.appendChild(btn);
-      });
+
+        let hasAvailableSlots = false;
+
+        data.slots.forEach(slot => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+
+          if (slot.available) {
+            hasAvailableSlots = true;
+            btn.className = 'time-slot-btn';
+            btn.innerHTML = `<span class="slot-time">${slot.time}</span>`;
+            btn.onclick = () => selectTime(slot.time, btn);
+          } else if (slot.booked) {
+            btn.className = 'time-slot-btn booked';
+            btn.disabled = true;
+            btn.innerHTML = `<span class="slot-time">${slot.time}</span> <span class="slot-booked-tag">Reserved</span>`;
+            btn.title = 'This slot has already been booked by another client';
+          } else {
+            btn.className = 'time-slot-btn blocked';
+            btn.disabled = true;
+            btn.innerHTML = `<span class="slot-time">${slot.time}</span> <span class="slot-booked-tag">Unavailable</span>`;
+          }
+
+          slotsContainer.appendChild(btn);
+        });
+
+        if (!hasAvailableSlots) {
+          const notice = document.createElement('div');
+          notice.style.cssText = 'color: #E65100; font-size: 0.85rem; margin-top: 10px; font-weight: 500;';
+          notice.innerText = 'All appointment slots for this date are fully reserved. Please pick another day on the calendar.';
+          slotsContainer.appendChild(notice);
+        }
+
+      } catch (err) {
+        console.error('Error loading slots:', err);
+        // Fallback
+        slotsContainer.innerHTML = '';
+        const fallbackSlots = ['9:00 AM', '11:30 AM', '2:00 PM', '4:30 PM', '7:30 PM'];
+        fallbackSlots.forEach(time => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'time-slot-btn';
+          btn.innerHTML = `<span class="slot-time">${time}</span>`;
+          btn.onclick = () => selectTime(time, btn);
+          slotsContainer.appendChild(btn);
+        });
+      }
 
       updateWizardButtons();
     }

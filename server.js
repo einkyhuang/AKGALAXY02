@@ -18,6 +18,146 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'square_config.json');
 const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
+const CALENDAR_FILE = path.join(DATA_DIR, 'calendar_settings.json');
+
+// Helper: Normalize time string for reliable matching (e.g. '7:30 PM' -> '07:30 PM')
+function normalizeTime(t) {
+  if (!t) return '';
+  t = t.trim().toUpperCase();
+  const match = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+  if (match) {
+    const hour = match[1].padStart(2, '0');
+    return `${hour}:${match[2]} ${match[3]}`;
+  }
+  return t;
+}
+
+// Helper: Normalize date string YYYY-MM-DD
+function normalizeDateStr(d) {
+  if (!d) return '';
+  // If date is in ISO format
+  if (d.includes('T')) d = d.split('T')[0];
+  const parts = d.split('-');
+  if (parts.length === 3) {
+    return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+  }
+  return d;
+}
+
+// Helper: Read Calendar Settings
+function readCalendarSettings() {
+  try {
+    if (fs.existsSync(CALENDAR_FILE)) {
+      return JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf-8'));
+    }
+  } catch (err) {
+    console.error('Error reading calendar_settings.json:', err);
+  }
+  return {
+    defaultSlots: ['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM', '07:30 PM'],
+    recurringClosedDays: [],
+    blockedDates: [],
+    dateOverrides: {}
+  };
+}
+
+// Helper: Save Calendar Settings
+function saveCalendarSettings(settings) {
+  fs.writeFileSync(CALENDAR_FILE, JSON.stringify(settings, null, 2), 'utf-8');
+}
+
+// Helper: Get detailed availability for a specific YYYY-MM-DD date
+function getDaySlotDetails(dateStr) {
+  const normDate = normalizeDateStr(dateStr);
+  const settings = readCalendarSettings();
+  const bookings = readBookings();
+
+  const d = new Date(normDate + 'T12:00:00');
+  const dayOfWeek = d.getDay(); // 0 = Sun, 1 = Mon...
+
+  // Check if permanently blocked date
+  const isBlockedDate = (settings.blockedDates || []).includes(normDate);
+  const isRecurringClosed = (settings.recurringClosedDays || []).includes(dayOfWeek);
+
+  const override = (settings.dateOverrides || {})[normDate];
+
+  if (isBlockedDate || (isRecurringClosed && (!override || override.status !== 'OPEN')) || (override && override.status === 'BLOCKED')) {
+    return {
+      date: normDate,
+      isBlocked: true,
+      reason: override?.reason || 'Studio closed on this date',
+      slots: [],
+      openSlotsCount: 0,
+      totalSlotsCount: 0
+    };
+  }
+
+  // Base slot list
+  let baseSlots = (override && Array.isArray(override.slots) && override.slots.length > 0)
+    ? override.slots
+    : (settings.defaultSlots || ['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM', '07:30 PM']);
+
+  // Manually blocked slots on this date
+  const blockedSlotsForDay = (override && Array.isArray(override.blockedSlots))
+    ? override.blockedSlots.map(normalizeTime)
+    : [];
+
+  // Filter active bookings for this date
+  const dayBookings = bookings.filter(b => {
+    if (b.status === 'CANCELLED') return false;
+    const bDate = normalizeDateStr(b.appointment?.rawDate || '');
+    return bDate === normDate;
+  });
+
+  const slots = baseSlots.map(rawTime => {
+    const timeNorm = normalizeTime(rawTime);
+    const isManuallyBlocked = blockedSlotsForDay.includes(timeNorm);
+
+    // Find if already booked
+    const bookedMatch = dayBookings.find(b => normalizeTime(b.appointment?.time) === timeNorm);
+
+    let status = 'OPEN';
+    let available = true;
+    let bookingInfo = null;
+
+    if (bookedMatch) {
+      status = 'BOOKED';
+      available = false;
+      bookingInfo = {
+        bookingId: bookedMatch.id,
+        confirmationNumber: bookedMatch.confirmationNumber,
+        clientName: `${bookedMatch.customer?.firstName || ''} ${bookedMatch.customer?.lastName || ''}`.trim(),
+        clientPhone: bookedMatch.customer?.phone || '',
+        sessionTitle: bookedMatch.session?.title || ''
+      };
+    } else if (isManuallyBlocked) {
+      status = 'BLOCKED';
+      available = false;
+    }
+
+    return {
+      time: rawTime,
+      normalizedTime: timeNorm,
+      status,
+      available,
+      booked: Boolean(bookedMatch),
+      isManuallyBlocked,
+      booking: bookingInfo
+    };
+  });
+
+  const openSlotsCount = slots.filter(s => s.available).length;
+
+  return {
+    date: normDate,
+    isBlocked: false,
+    slots,
+    openSlotsCount,
+    totalSlotsCount: slots.length,
+    dayBookingsCount: dayBookings.length
+  };
+}
+
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -120,6 +260,64 @@ function requireAdminAuth(req, res, next) {
   next();
 }
 
+
+/* ==========================================================================
+   PUBLIC API: Interactive Calendar & Slot Availability
+   ========================================================================== */
+
+// 1. Get Month Availability (Days with available vs booked/blocked slots)
+app.get('/api/calendar/month-availability', (req, res) => {
+  try {
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+    const month = parseInt(req.query.month) || (new Date().getMonth() + 1); // 1-12
+
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const days = {};
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const details = getDaySlotDetails(dateStr);
+      days[day] = {
+        date: dateStr,
+        isBlocked: details.isBlocked,
+        available: !details.isBlocked && details.openSlotsCount > 0,
+        openSlotsCount: details.openSlotsCount,
+        totalSlotsCount: details.totalSlotsCount,
+        hasBookings: details.dayBookingsCount > 0
+      };
+    }
+
+    res.json({
+      success: true,
+      year,
+      month,
+      days
+    });
+  } catch (err) {
+    console.error('Error getting month availability:', err);
+    res.status(500).json({ error: 'Failed to calculate month availability.' });
+  }
+});
+
+// 2. Get Available & Booked Slots for a Specific Date
+app.get('/api/calendar/slots', (req, res) => {
+  try {
+    const { date } = req.query;
+    if (!date) {
+      return res.status(400).json({ error: 'Query parameter date (YYYY-MM-DD) is required.' });
+    }
+
+    const details = getDaySlotDetails(date);
+    res.json({
+      success: true,
+      ...details
+    });
+  } catch (err) {
+    console.error('Error fetching slots for date:', err);
+    res.status(500).json({ error: 'Failed to retrieve slots for date.' });
+  }
+});
+
 /* ==========================================================================
    PUBLIC API: Square Configuration & Payments
    ========================================================================== */
@@ -158,6 +356,20 @@ app.post('/api/square/process-payment', async (req, res) => {
     const currency = config.currency || 'USD';
 
     let paymentResult = null;
+    // Concurrency Safety: Verify slot is not already booked!
+    const appointmentDate = normalizeDateStr(bookingDetails.appointment?.rawDate || '');
+    const appointmentTime = normalizeTime(bookingDetails.appointment?.time || '');
+
+    if (appointmentDate && appointmentTime) {
+      const dayDetails = getDaySlotDetails(appointmentDate);
+      const matchedSlot = dayDetails.slots.find(s => s.normalizedTime === appointmentTime);
+      if (dayDetails.isBlocked || (matchedSlot && !matchedSlot.available)) {
+        return res.status(409).json({
+          error: 'This appointment slot (' + (bookingDetails.appointment.time || '') + ' on ' + appointmentDate + ') has already been reserved. Please select another time.'
+        });
+      }
+    }
+
     const isMock = sourceId === 'mock_card_token' || !active.accessToken;
 
     if (!isMock) {
@@ -551,6 +763,106 @@ app.post('/api/admin/test-square', requireAdminAuth, async (req, res) => {
   } catch (err) {
     console.error('Error testing Square connection:', err);
     res.status(500).json({ success: false, error: err.message || 'Failed to connect to Square API.' });
+  }
+});
+
+
+// 9. Admin Calendar: Get Full Calendar Settings & Overview
+app.get('/api/admin/calendar', requireAdminAuth, (req, res) => {
+  const settings = readCalendarSettings();
+  res.json({
+    success: true,
+    settings
+  });
+});
+
+// 10. Admin Calendar: Update Settings (Default Slots, Recurring Closed Days, Blocked Dates)
+app.post('/api/admin/calendar/settings', requireAdminAuth, (req, res) => {
+  try {
+    const { defaultSlots, recurringClosedDays, blockedDates } = req.body;
+    const settings = readCalendarSettings();
+
+    if (Array.isArray(defaultSlots)) {
+      settings.defaultSlots = defaultSlots.map(s => s.trim()).filter(Boolean);
+    }
+    if (Array.isArray(recurringClosedDays)) {
+      settings.recurringClosedDays = recurringClosedDays.map(Number);
+    }
+    if (Array.isArray(blockedDates)) {
+      settings.blockedDates = blockedDates.map(normalizeDateStr).filter(Boolean);
+    }
+
+    saveCalendarSettings(settings);
+    res.json({ success: true, settings });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update calendar settings.' });
+  }
+});
+
+// 11. Admin Calendar: Override Specific Date (Block / Open / Custom Slots)
+app.post('/api/admin/calendar/date-override', requireAdminAuth, (req, res) => {
+  try {
+    const { date, status, reason, slots, blockedSlots } = req.body;
+    if (!date) return res.status(400).json({ error: 'Date is required.' });
+
+    const normDate = normalizeDateStr(date);
+    const settings = readCalendarSettings();
+    if (!settings.dateOverrides) settings.dateOverrides = {};
+
+    if (status === 'RESET') {
+      delete settings.dateOverrides[normDate];
+    } else {
+      settings.dateOverrides[normDate] = {
+        status: status || 'OPEN',
+        reason: reason || '',
+        slots: Array.isArray(slots) ? slots : undefined,
+        blockedSlots: Array.isArray(blockedSlots) ? blockedSlots : []
+      };
+    }
+
+    saveCalendarSettings(settings);
+    res.json({ success: true, date: normDate, override: settings.dateOverrides[normDate] || null });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to override date schedule.' });
+  }
+});
+
+// 12. Admin Calendar: Toggle Specific Slot (Block or Unblock slot on date)
+app.post('/api/admin/calendar/toggle-slot', requireAdminAuth, (req, res) => {
+  try {
+    const { date, time } = req.body;
+    if (!date || !time) return res.status(400).json({ error: 'Date and time are required.' });
+
+    const normDate = normalizeDateStr(date);
+    const normTime = normalizeTime(time);
+    const settings = readCalendarSettings();
+
+    if (!settings.dateOverrides) settings.dateOverrides = {};
+    if (!settings.dateOverrides[normDate]) {
+      settings.dateOverrides[normDate] = {
+        status: 'OPEN',
+        blockedSlots: []
+      };
+    }
+
+    let blockedList = settings.dateOverrides[normDate].blockedSlots || [];
+    blockedList = blockedList.map(normalizeTime);
+
+    if (blockedList.includes(normTime)) {
+      // Unblock it
+      blockedList = blockedList.filter(t => t !== normTime);
+    } else {
+      // Block it
+      blockedList.push(normTime);
+    }
+
+    settings.dateOverrides[normDate].blockedSlots = blockedList;
+    saveCalendarSettings(settings);
+
+    const updatedDay = getDaySlotDetails(normDate);
+    res.json({ success: true, dayDetails: updatedDay });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to toggle time slot.' });
   }
 });
 
