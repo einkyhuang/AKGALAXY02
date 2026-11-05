@@ -542,6 +542,21 @@
       border: 2px solid var(--accent-gold);
       background: var(--accent-light);
     }
+    .admin-day-cell.is-today {
+      border-color: var(--accent-gold);
+      background: #FDFBF7;
+    }
+    .admin-day-cell.is-today .admin-day-num {
+      background: var(--accent-gold);
+      color: #FFF;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
     .admin-day-cell.inactive {
       background: #F7F5F2;
       border-color: #EFEBE4;
@@ -844,9 +859,12 @@
           <!-- Left Calendar Grid -->
           <div class="admin-calendar-card">
             <div class="calendar-header">
-              <button class="btn btn-secondary btn-sm" onclick="changeAdminMonth(-1)">◀ Prev Month</button>
-              <div class="calendar-month-label" id="admin-cal-title">July 2026</div>
-              <button class="btn btn-secondary btn-sm" onclick="changeAdminMonth(1)">Next Month ▶</button>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <button class="btn btn-secondary btn-sm" onclick="changeAdminMonth(-1)" title="Previous Month">◀</button>
+                <button class="btn btn-secondary btn-sm" onclick="jumpAdminToToday()" style="font-weight: 600; padding: 4px 10px;" title="Jump to Today">Today</button>
+                <button class="btn btn-secondary btn-sm" onclick="changeAdminMonth(1)" title="Next Month">▶</button>
+              </div>
+              <div class="calendar-month-label" id="admin-cal-title">Loading...</div>
             </div>
 
             <div class="calendar-weekdays">
@@ -1199,10 +1217,11 @@
     let selectedEnv = 'sandbox';
     let currentView = 'dashboard';
 
-    // Calendar state
-    let adminCalYear = 2026;
-    let adminCalMonth = 6; // July (0-indexed)
-    let selectedAdminDateStr = '2026-07-09';
+    // Calendar state - Defaults dynamically to today's date
+    const initialToday = new Date();
+    let adminCalYear = initialToday.getFullYear();
+    let adminCalMonth = initialToday.getMonth(); // 0-indexed
+    let selectedAdminDateStr = `${initialToday.getFullYear()}-${String(initialToday.getMonth() + 1).padStart(2, '0')}-${String(initialToday.getDate()).padStart(2, '0')}`;
     let selectedDayDetails = null;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -1477,13 +1496,29 @@
         adminCalMonth = 0;
         adminCalYear++;
       }
-      selectedAdminDateStr = `${adminCalYear}-${String(adminCalMonth + 1).padStart(2, '0')}-01`;
+      const now = new Date();
+      if (adminCalYear === now.getFullYear() && adminCalMonth === now.getMonth()) {
+        selectedAdminDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      } else {
+        selectedAdminDateStr = `${adminCalYear}-${String(adminCalMonth + 1).padStart(2, '0')}-01`;
+      }
+      loadAdminCalendar();
+    }
+
+    function jumpAdminToToday() {
+      const now = new Date();
+      adminCalYear = now.getFullYear();
+      adminCalMonth = now.getMonth();
+      selectedAdminDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       loadAdminCalendar();
     }
 
     function renderAdminCalendarGrid(daysData) {
       const grid = document.getElementById('admin-days-grid');
       grid.innerHTML = '';
+
+      const now = new Date();
+      const realTodayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
       const firstDay = new Date(adminCalYear, adminCalMonth, 1).getDay();
       const numDays = new Date(adminCalYear, adminCalMonth + 1, 0).getDate();
@@ -1502,6 +1537,7 @@
         const cell = document.createElement('div');
         cell.className = 'admin-day-cell';
         if (dateStr === selectedAdminDateStr) cell.classList.add('selected');
+        if (dateStr === realTodayStr) cell.classList.add('is-today');
 
         let badgeHtml = '';
         if (dayInfo.isBlocked) {
