@@ -5,11 +5,26 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import {
+  initDatabase,
+  getAllBookings,
+  getBookingById,
+  saveNewBooking,
+  updateBooking,
+  deleteBooking,
+  getCalendarSettings,
+  saveCalendarSettings as dbSaveCalendarSettings,
+  getSquareConfig,
+  saveSquareConfig as dbSaveSquareConfig
+} from './db.js';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initialize SQLite database schema and perform migrations
+initDatabase();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,26 +59,13 @@ function normalizeDateStr(d) {
   return d;
 }
 
-// Helper: Read Calendar Settings
+// Database Helpers: Calendar Settings
 function readCalendarSettings() {
-  try {
-    if (fs.existsSync(CALENDAR_FILE)) {
-      return JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf-8'));
-    }
-  } catch (err) {
-    console.error('Error reading calendar_settings.json:', err);
-  }
-  return {
-    defaultSlots: ['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM', '07:30 PM'],
-    recurringClosedDays: [],
-    blockedDates: [],
-    dateOverrides: {}
-  };
+  return getCalendarSettings();
 }
 
-// Helper: Save Calendar Settings
 function saveCalendarSettings(settings) {
-  fs.writeFileSync(CALENDAR_FILE, JSON.stringify(settings, null, 2), 'utf-8');
+  return dbSaveCalendarSettings(settings);
 }
 
 // Helper: Get detailed availability for a specific YYYY-MM-DD date
@@ -167,54 +169,19 @@ if (!fs.existsSync(DATA_DIR)) {
 // Active admin session tokens (token -> expiry timestamp)
 const adminSessions = new Map();
 
-// Helper: Read Square Config
+// Helper: Read Square Config (delegated to SQLite DB engine with fallback)
 function readSquareConfig() {
-  try {
-    if (fs.existsSync(CONFIG_FILE)) {
-      const data = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
-      return data;
-    }
-  } catch (err) {
-    console.error('Error reading square_config.json:', err);
-  }
-  return {
-    environment: process.env.SQUARE_ENVIRONMENT || 'sandbox',
-    depositAmount: 100,
-    currency: 'USD',
-    adminPassword: process.env.ADMIN_PASSWORD || 'Admin2026@Square',
-    sandbox: {
-      applicationId: process.env.SQUARE_SANDBOX_APP_ID || '',
-      accessToken: process.env.SQUARE_SANDBOX_ACCESS_TOKEN || '',
-      locationId: process.env.SQUARE_SANDBOX_LOCATION_ID || ''
-    },
-    production: {
-      applicationId: process.env.SQUARE_PROD_APP_ID || '',
-      accessToken: process.env.SQUARE_PROD_ACCESS_TOKEN || '',
-      locationId: process.env.SQUARE_PROD_LOCATION_ID || ''
-    }
-  };
+  return getSquareConfig();
 }
 
-// Helper: Save Square Config
+// Helper: Save Square Config (delegated to SQLite DB engine + backup)
 function saveSquareConfig(config) {
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+  return dbSaveSquareConfig(config);
 }
 
-// Helper: Read Bookings
+// Helper: Read Bookings (delegated to SQLite DB engine)
 function readBookings() {
-  try {
-    if (fs.existsSync(BOOKINGS_FILE)) {
-      return JSON.parse(fs.readFileSync(BOOKINGS_FILE, 'utf-8'));
-    }
-  } catch (err) {
-    console.error('Error reading bookings.json:', err);
-  }
-  return [];
-}
-
-// Helper: Save Bookings
-function saveBookings(bookings) {
-  fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), 'utf-8');
+  return getAllBookings();
 }
 
 // Helper: Get active Square Credentials based on environment
@@ -466,10 +433,8 @@ app.post('/api/square/process-payment', async (req, res) => {
       balanceStatus: 'UNPAID'
     };
 
-    // Save to database
-    const bookings = readBookings();
-    bookings.unshift(newBooking);
-    saveBookings(bookings);
+    // Save to SQLite database
+    saveNewBooking(newBooking);
 
     res.json({
       success: true,
@@ -563,9 +528,7 @@ app.post('/api/square/webhook', async (req, res) => {
         const bookings = readBookings();
         const b = bookings.find(item => item.payment && item.payment.paymentId === payment.id);
         if (b) {
-          b.payment.status = 'COMPLETED';
-          b.status = 'CONFIRMED';
-          saveBookings(bookings);
+          updateBooking(b.id, { status: 'CONFIRMED' });
         }
       }
     }
@@ -612,35 +575,24 @@ app.get('/api/admin/bookings', requireAdminAuth, (req, res) => {
 app.patch('/api/admin/bookings/:id', requireAdminAuth, (req, res) => {
   const { id } = req.params;
   const updates = req.body;
+  const updated = updateBooking(id, updates);
 
-  const bookings = readBookings();
-  const index = bookings.findIndex(b => b.id === id);
-
-  if (index === -1) {
+  if (!updated) {
     return res.status(404).json({ error: 'Booking not found.' });
   }
 
-  // Apply allowed updates
-  if (updates.status) bookings[index].status = updates.status;
-  if (updates.balanceStatus) bookings[index].balanceStatus = updates.balanceStatus;
-  if (updates.adminNotes !== undefined) bookings[index].adminNotes = updates.adminNotes;
-
-  saveBookings(bookings);
-  res.json({ success: true, booking: bookings[index] });
+  res.json({ success: true, booking: updated });
 });
 
 // 5. Admin Delete Booking
 app.delete('/api/admin/bookings/:id', requireAdminAuth, (req, res) => {
   const { id } = req.params;
-  let bookings = readBookings();
-  const initialLength = bookings.length;
-  bookings = bookings.filter(b => b.id !== id);
+  const deleted = deleteBooking(id);
 
-  if (bookings.length === initialLength) {
+  if (!deleted) {
     return res.status(404).json({ error: 'Booking not found.' });
   }
 
-  saveBookings(bookings);
   res.json({ success: true, message: 'Booking deleted successfully.' });
 });
 

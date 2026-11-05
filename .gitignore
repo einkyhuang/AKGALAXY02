@@ -4,3 +4,6 @@ dist/
 taozijia-images/
 node_modules/
 .env
+*.sqlite-wal
+*.sqlite-shm
+

@@ -38,11 +38,11 @@
       "receiptUrl": "https://squareup.com/receipt/preview/demo",
       "cardBrand": "VISA (Demo)",
       "last4": "1111",
-      "paidAt": "2026-11-05T15:14:08.683Z",
-      "isDemo": true
+      "paidAt": "2026-11-05T15:14:08.683Z"
     },
     "status": "CONFIRMED",
-    "balanceStatus": "UNPAID"
+    "balanceStatus": "PAID",
+    "adminNotes": "Paid via Venmo on arrival"
   },
   {
     "id": "BK-1793891212824",
@@ -57,7 +57,9 @@
       "cityStateZip": "Bellevue, WA 98004",
       "participatingAdults": "Partner Alex",
       "participatingChildren": "None (First Baby)",
-      "notes": "Indoor studio session requested."
+      "participatingPets": "",
+      "notes": "Indoor studio session requested.",
+      "referral": ""
     },
     "session": {
       "key": "maternity-deluxe",
@@ -68,7 +70,8 @@
     },
     "appointment": {
       "date": "July 15, 2026 at 2:00 PM",
-      "time": "2:00 PM"
+      "time": "2:00 PM",
+      "rawDate": ""
     },
     "payment": {
       "method": "square_web_payments_sdk",
@@ -80,11 +83,11 @@
       "receiptUrl": "https://squareup.com/receipt/preview/demo",
       "cardBrand": "VISA (Demo)",
       "last4": "1111",
-      "paidAt": "2026-11-05T15:06:52.823Z",
-      "isDemo": true
+      "paidAt": "2026-11-05T15:06:52.824Z"
     },
     "status": "CONFIRMED",
-    "balanceStatus": "UNPAID"
+    "balanceStatus": "UNPAID",
+    "adminNotes": ""
   },
   {
     "id": "BK-20261105-001",
@@ -122,11 +125,13 @@
       "status": "COMPLETED",
       "amount": 100,
       "currency": "USD",
+      "receiptUrl": "https://squareup.com/receipt/preview/sample",
       "cardBrand": "VISA",
       "last4": "1111",
-      "receiptUrl": "https://squareup.com/receipt/preview/sample",
-      "paidAt": "2026-11-05T14:30:15.000Z"
+      "paidAt": "2026-11-05T14:30:00.000Z"
     },
-    "status": "CONFIRMED"
+    "status": "CONFIRMED",
+    "balanceStatus": "UNPAID",
+    "adminNotes": ""
   }
 ]
