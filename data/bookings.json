@@ -1,0 +1,87 @@
+[
+  {
+    "id": "BK-1793891212824",
+    "confirmationNumber": "NFS-2026-2337",
+    "createdAt": "2026-11-05T15:06:52.824Z",
+    "customer": {
+      "firstName": "Sophia",
+      "lastName": "Wang",
+      "phone": "(206) 555-8833",
+      "email": "sophia.wang@example.com",
+      "address": "456 Bellevue Way",
+      "cityStateZip": "Bellevue, WA 98004",
+      "participatingAdults": "Partner Alex",
+      "participatingChildren": "None (First Baby)",
+      "notes": "Indoor studio session requested."
+    },
+    "session": {
+      "key": "maternity-deluxe",
+      "title": "Maternity Deluxe Session – Studio & Outdoor",
+      "totalPrice": 599,
+      "depositAmount": 100,
+      "remainingBalance": 499
+    },
+    "appointment": {
+      "date": "July 15, 2026 at 2:00 PM",
+      "time": "2:00 PM"
+    },
+    "payment": {
+      "method": "square_web_payments_sdk",
+      "paymentId": "sq_demo_1793891212823",
+      "orderId": "sq_ord_demo_6082",
+      "status": "COMPLETED",
+      "amount": 100,
+      "currency": "USD",
+      "receiptUrl": "https://squareup.com/receipt/preview/demo",
+      "cardBrand": "VISA (Demo)",
+      "last4": "1111",
+      "paidAt": "2026-11-05T15:06:52.823Z",
+      "isDemo": true
+    },
+    "status": "CONFIRMED",
+    "balanceStatus": "UNPAID"
+  },
+  {
+    "id": "BK-20261105-001",
+    "confirmationNumber": "NFS-2026-X839",
+    "createdAt": "2026-11-05T14:30:00.000Z",
+    "customer": {
+      "firstName": "Emily",
+      "lastName": "Chen",
+      "phone": "(206) 555-0192",
+      "email": "emily.chen@example.com",
+      "address": "1200 4th Ave, Apt 18B",
+      "cityStateZip": "Seattle, WA 98101",
+      "participatingAdults": "Husband David Chen",
+      "participatingChildren": "Leo (4 years old)",
+      "participatingPets": "Milo (Golden Retriever)",
+      "notes": "Prefers natural outdoor sunlight during golden hour.",
+      "referral": "Instagram / Redbook"
+    },
+    "session": {
+      "key": "maternity-deluxe",
+      "title": "Maternity Deluxe Session – Studio & Outdoor",
+      "totalPrice": 599,
+      "depositAmount": 100,
+      "remainingBalance": 499
+    },
+    "appointment": {
+      "date": "Thursday, July 9, 2026",
+      "time": "7:30 PM",
+      "rawDate": "2026-07-09"
+    },
+    "payment": {
+      "method": "square_card",
+      "paymentId": "sq_pay_sample_test_001",
+      "orderId": "sq_ord_sample_001",
+      "status": "COMPLETED",
+      "amount": 100,
+      "currency": "USD",
+      "cardBrand": "VISA",
+      "last4": "1111",
+      "receiptUrl": "https://squareup.com/receipt/preview/sample",
+      "paidAt": "2026-11-05T14:30:15.000Z"
+    },
+    "status": "CONFIRMED"
+  }
+]

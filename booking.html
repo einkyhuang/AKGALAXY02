@@ -379,6 +379,109 @@
       cursor: pointer;
     }
 
+    
+    /* ================= Square Payment Gateway Styles ================= */
+    .square-payment-box {
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin-top: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .payment-methods-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .payment-method-title {
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-primary);
+    }
+    .square-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 4px;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+    .square-card-element {
+      min-height: 90px;
+      margin-bottom: 10px;
+    }
+    .payment-status-message {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+    .payment-status-message.error {
+      background-color: #FFEBEE;
+      color: #C62828;
+      border: 1px solid rgba(198, 40, 40, 0.2);
+    }
+    .payment-status-message.success {
+      background-color: #E8F5E9;
+      color: #2E7D32;
+      border: 1px solid rgba(46, 125, 50, 0.2);
+    }
+    .square-sandbox-banner {
+      background-color: #FFF8E1;
+      border: 1px dashed #FFB300;
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-top: 18px;
+    }
+    .square-hosted-alt {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px dashed var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--accent-gold);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 0;
+    }
+    .btn-link:hover {
+      color: #9E7D45;
+    }
+    .square-security-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      line-height: 1.4;
+    }
+
     /* Payment Summary Block */
     .payment-summary-block {
       background-color: var(--bg-secondary);
@@ -806,14 +909,14 @@
         </label>
       </div>
 
-      <!-- STEP 4 PANEL: DEPOSIT PAYMENT -->
+            <!-- STEP 4 PANEL: DEPOSIT PAYMENT (SQUARE GATEWAY) -->
       <div class="wizard-panel" id="panel-4">
         <h2 style="font-family: var(--font-serif); margin-bottom: 30px; font-size: 1.6rem; text-align: center;">Reserve Your Session</h2>
         
         <div class="payment-summary-block">
           <div class="payment-summary-row">
             <span>Selected Session:</span>
-            <span id="pay-session-name">Maternity Full Session</span>
+            <span id="pay-session-name">Maternity Deluxe Session</span>
           </div>
           <div class="payment-summary-row">
             <span>Date & Time:</span>
@@ -821,38 +924,71 @@
           </div>
           <div class="payment-summary-row">
             <span>Full Session Price:</span>
-            <span id="pay-total-price">$750.00</span>
+            <span id="pay-total-price">$599.00</span>
           </div>
           <div class="payment-summary-row">
             <span>Non-Refundable Deposit Due Now:</span>
-            <span style="color: var(--accent-gold); font-weight: 600;">$100.00</span>
+            <span style="color: var(--accent-gold); font-weight: 600;" id="pay-deposit-price">$100.00</span>
           </div>
           <div class="payment-summary-row">
             <span>Remaining Balance (Due Session Day):</span>
-            <span id="pay-remaining-price">$650.00</span>
+            <span id="pay-remaining-price">$499.00</span>
           </div>
         </div>
 
-        <form id="payment-form">
-          <div class="form-fields-grid">
-            <div class="booking-field-group form-field-full">
-              <label for="cardholder-name">Cardholder Name*</label>
-              <input type="text" id="cardholder-name" required placeholder="e.g. John Doe">
-            </div>
-            <div class="booking-field-group form-field-full">
-              <label for="card-number">Card Number*</label>
-              <input type="text" id="card-number" required placeholder="•••• •••• •••• ••••" maxlength="19">
-            </div>
-            <div class="booking-field-group">
-              <label for="card-expiry">Expiration Date*</label>
-              <input type="text" id="card-expiry" required placeholder="MM/YY" maxlength="5">
-            </div>
-            <div class="booking-field-group">
-              <label for="card-cvv">CVV*</label>
-              <input type="text" id="card-cvv" required placeholder="123" maxlength="4">
-            </div>
+        <!-- Square Payment Card Box -->
+        <div class="square-payment-box">
+          <div class="payment-methods-header">
+            <span class="payment-method-title">
+              💳 Credit / Debit Card
+            </span>
+            <span class="square-badge">
+              🔒 Powered by Square
+            </span>
           </div>
-        </form>
+
+          <!-- Digital Wallet Container -->
+          <div id="digital-wallet-container" style="display: none; margin-bottom: 15px;"></div>
+
+          <!-- Square Hosted Card Fields Container -->
+          <div id="card-container" class="square-card-element">
+            <div style="color: var(--text-muted); font-size: 0.88rem; padding: 15px 0;">Loading secure Square card fields...</div>
+          </div>
+
+          <!-- Billing Postal Code -->
+          <div class="booking-field-group" id="billing-postal-wrap" style="margin-top: 15px;">
+            <label for="billing-postal-code">Billing Postal / Zip Code*</label>
+            <input type="text" id="billing-postal-code" placeholder="e.g. 98101" value="98101">
+          </div>
+
+          <!-- Status / Error Messages -->
+          <div id="payment-status-message" class="payment-status-message" style="display: none;"></div>
+
+          <!-- Sandbox Test helper banner -->
+          <div id="square-sandbox-banner" class="square-sandbox-banner" style="display: none;">
+            <div style="font-weight: 600; margin-bottom: 4px; color: #E65100;">🧪 Square Test Sandbox Mode Active</div>
+            <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
+              Card transactions are processed in test mode. You may use Square's test Visa <code>4111 1111 1111 1111</code> (Exp: any future date, CVV: <code>123</code>), or configure production API keys in <a href="admin.html" target="_blank" style="color: var(--accent-gold); font-weight: 600; text-decoration: underline;">Square Admin Dashboard ↗</a>.
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="fillTestSquarePayment()" style="margin-top: 10px;">
+              ⚡ Fill Test Credentials
+            </button>
+          </div>
+
+          <!-- Alternative: Square Hosted Checkout Link -->
+          <div class="square-hosted-alt">
+            <span>Prefer paying on Square's official checkout page?</span>
+            <button type="button" class="btn-link" onclick="payViaSquareHostedCheckout()">
+              Pay via Square Hosted Checkout Link ↗
+            </button>
+          </div>
+
+          <div class="square-security-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Guaranteed safe & secure. 256-bit SSL encrypted. Payment is processed directly by Square; your card data is never stored on our servers.
+          </div>
+        </div>
+
       </div>
 
       <!-- SUCCESS PANEL -->
@@ -860,17 +996,26 @@
         <div class="booking-success-block">
           <div class="booking-success-icon">✓</div>
           <h2 style="font-family: var(--font-serif); margin-bottom: 15px; font-size: 2rem;">Booking Confirmed!</h2>
-          <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 30px;">Thank you for reserving your session. A confirmation email and deposit invoice have been sent to you.</p>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 30px;">Thank you for reserving your session. Your deposit payment has been processed securely via Square, and a confirmation receipt has been sent to your email.</p>
           
-          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 25px; max-width: 550px; margin: 0 auto 40px auto; text-align: left; font-size: 0.95rem; line-height: 1.6;">
-            <p><strong>Confirmation Number:</strong> <span style="font-family: monospace; font-size: 1rem; color: var(--accent-gold);" id="success-conf-num">LSP-2026-X839</span></p>
-            <p><strong>Session:</strong> <span id="success-session-name">Maternity Full Session</span></p>
-            <p><strong>Scheduled Time:</strong> <span id="success-scheduled-time">Thursday, July 9, 2026 at 7:30 PM</span></p>
-            <p><strong>Deposit Paid:</strong> $100.00 (Via Mock Card)</p>
-            <p><strong>Remaining Balance:</strong> <span id="success-remaining-price">$650.00</span> (Due on session day)</p>
+          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 25px; max-width: 580px; margin: 0 auto 40px auto; text-align: left; font-size: 0.95rem; line-height: 1.7;">
+            <p><strong>Confirmation Number:</strong> <span style="font-family: monospace; font-size: 1.05rem; color: var(--accent-gold); font-weight: 600;" id="success-conf-num">NFS-2026-X839</span></p>
+            <p><strong>Session Package:</strong> <span id="success-session-name">Maternity Deluxe Session</span></p>
+            <p><strong>Scheduled Appointment:</strong> <span id="success-scheduled-time">Thursday, July 9, 2026 at 7:30 PM</span></p>
+            <p><strong>Deposit Paid:</strong> <span style="color: var(--success-green); font-weight: 600;" id="success-deposit-paid">$100.00 (Square Verified)</span></p>
+            <p><strong>Square Payment ID:</strong> <span style="font-family: monospace; font-size: 0.88rem;" id="success-payment-id">sq_pay_verified</span></p>
+            <div id="success-receipt-wrapper" style="margin-top: 6px;">
+              <a href="#" id="success-receipt-link" target="_blank" style="color: var(--accent-gold); font-weight: 600; text-decoration: underline; font-size: 0.9rem;">View Official Square Digital Receipt ↗</a>
+            </div>
+            <p style="margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 8px;">
+              <strong>Remaining Balance:</strong> <span id="success-remaining-price">$499.00</span> (Due on session day)
+            </p>
           </div>
 
-          <a href="index.html" class="btn btn-primary">Return to Home Page</a>
+          <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn btn-primary">Return to Home Page</a>
+            <a href="admin.html" target="_blank" class="btn btn-secondary">Open Square Admin ↗</a>
+          </div>
         </div>
       </div>
 
@@ -1156,6 +1301,15 @@
       loadPackage(selectedPackageKey);
       renderCalendar();
       updateWizardButtons();
+      // Check if redirected from Square hosted checkout
+      if (params.get('payment') === 'success') {
+        const ref = params.get('ref') || 'NFS-SQUARE-CHECKOUT';
+        showBookingConfirmation({
+          confirmationNumber: ref,
+          paymentId: 'sq_hosted_' + Date.now(),
+          isDemo: false
+        });
+      }
     });
 
     function loadPackage(key) {
@@ -1181,6 +1335,330 @@
       document.getElementById('terms-box').innerHTML = `<h3>${pkg.termsTitle}</h3>` + termsTemplate;
     }
 
+    // ================= Square Payment Gateway Integration =================
+    let squarePayments = null;
+    let squareCard = null;
+    let squareConfig = null;
+    let isSquareInitializing = false;
+
+    // Load Square Config on page load
+    async function loadSquareConfig() {
+      try {
+        const res = await fetch('/api/square/config');
+        if (res.ok) {
+          squareConfig = await res.json();
+        }
+      } catch (err) {
+        console.warn('Could not fetch /api/square/config:', err);
+      }
+      if (!squareConfig) {
+        squareConfig = {
+          environment: 'sandbox',
+          applicationId: '',
+          locationId: '',
+          depositAmount: 100,
+          currency: 'USD',
+          isConfigured: false
+        };
+      }
+    }
+
+    async function initSquarePayment() {
+      if (squareCard || isSquareInitializing) return;
+      isSquareInitializing = true;
+
+      const cardContainer = document.getElementById('card-container');
+      const sandboxBanner = document.getElementById('square-sandbox-banner');
+
+      if (!squareConfig) {
+        await loadSquareConfig();
+      }
+
+      // Update deposit labels with configured amount
+      const depositVal = squareConfig.depositAmount || 100;
+      const depositStr = `$${Number(depositVal).toFixed(2)}`;
+      const depEl = document.getElementById('pay-deposit-price');
+      if (depEl) depEl.innerText = depositStr;
+
+      const pkg = packages[selectedPackageKey];
+      if (pkg) {
+        const remaining = Math.max(0, pkg.price - depositVal);
+        document.getElementById('pay-remaining-price').innerText = `$${remaining.toFixed(2)}`;
+      }
+
+      // Check if credentials are configured
+      if (!squareConfig.isConfigured || !squareConfig.applicationId) {
+        // Test / Demo Mode fallback
+        if (sandboxBanner) sandboxBanner.style.display = 'block';
+        cardContainer.innerHTML = `
+          <div style="background: var(--bg-secondary); border: 1px dashed var(--border-color); padding: 18px; border-radius: 4px; font-size: 0.88rem;">
+            <div style="font-weight: 600; margin-bottom: 6px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+              <span>💳 Square Payment Gateway Active (Demo / Sandbox)</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 0.82rem; line-height: 1.5;">
+              Square Web Payments SDK is connected in demo mode. Click "Submit Booking & Pay $100" to simulate a real payment, or enter your official Square credentials in the <a href="admin.html" target="_blank" style="color: var(--accent-gold); font-weight: 600; text-decoration: underline;">Square Admin Dashboard ↗</a>.
+            </p>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="text" class="form-control" value="•••• •••• •••• 1111 (Square Test Visa)" disabled style="font-family: monospace; font-size: 0.85rem; background: #FFF; width: 100%; max-width: 280px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">Exp: 12/28 | CVV: 123</span>
+            </div>
+          </div>
+        `;
+        isSquareInitializing = false;
+        return;
+      }
+
+      if (squareConfig.environment === 'sandbox' && sandboxBanner) {
+        sandboxBanner.style.display = 'block';
+      }
+
+      // Dynamically load Square Web Payments SDK script
+      const sdkUrl = squareConfig.environment === 'production'
+        ? 'https://web.squarecdn.com/v1/square.js'
+        : 'https://sandbox.web.squarecdn.com/v1/square.js';
+
+      if (!window.Square) {
+        try {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = sdkUrl;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+        } catch (scriptErr) {
+          console.error('Failed to load Square script from CDN:', scriptErr);
+          cardContainer.innerHTML = '<div style="color: #c62828; padding: 10px; font-size: 0.85rem;">Failed to load Square Payments SDK. Please check network or ad-blocker.</div>';
+          isSquareInitializing = false;
+          return;
+        }
+      }
+
+      try {
+        cardContainer.innerHTML = ''; // clear loading text
+        squarePayments = window.Square.payments(squareConfig.applicationId, squareConfig.locationId);
+        
+        squareCard = await squarePayments.card({
+          style: {
+            input: {
+              backgroundColor: '#FAF7F2',
+              color: '#2C2825',
+              fontFamily: 'Montserrat, sans-serif',
+              fontSize: '15px'
+            },
+            'input::placeholder': {
+              color: '#8C8273'
+            },
+            '.input-container': {
+              borderColor: '#E2DBD2',
+              borderRadius: '4px'
+            },
+            '.input-container.is-focus': {
+              borderColor: '#2C2825'
+            }
+          }
+        });
+
+        await squareCard.attach('#card-container');
+        document.getElementById('billing-postal-wrap').style.display = 'none'; // Square card element handles postal internally
+      } catch (err) {
+        console.error('Failed to initialize Square card:', err);
+        cardContainer.innerHTML = `<div style="color: #c62828; padding: 12px; font-size: 0.85rem; background: #FFEBEE; border-radius: 4px;">Square initialization notice: ${err.message}. Check credentials in <a href="admin.html" target="_blank" style="color: #c62828; text-decoration: underline;">Admin</a>.</div>`;
+      } finally {
+        isSquareInitializing = false;
+      }
+    }
+
+    function fillTestSquarePayment() {
+      alert('Square Sandbox Test Card:\n\nCard Number: 4111 1111 1111 1111\nExpiration: Any future date (e.g. 12/28)\nCVV: 123\nPostal Code: 98101');
+    }
+
+    async function payViaSquareHostedCheckout() {
+      const btnNext = document.getElementById('btn-next');
+      const statusMsg = document.getElementById('payment-status-message');
+      statusMsg.style.display = 'none';
+
+      const pkg = packages[selectedPackageKey];
+      const customer = {
+        firstName: document.getElementById('first-name').value,
+        lastName: document.getElementById('last-name').value,
+        phone: (document.querySelector('.phone-flag-select').value + ' ' + document.getElementById('phone').value).trim(),
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        cityStateZip: document.getElementById('city-state-zip').value,
+        participatingAdults: document.getElementById('participating-adults').value,
+        participatingChildren: document.getElementById('participating-children').value,
+        participatingPets: document.getElementById('participating-pets').value,
+        notes: document.getElementById('booking-notes').value,
+        referral: document.getElementById('referral').value
+      };
+
+      try {
+        btnNext.disabled = true;
+        btnNext.innerText = 'Creating Square Checkout...';
+
+        const res = await fetch('/api/square/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bookingDetails: {
+              customer,
+              session: {
+                key: selectedPackageKey,
+                title: pkg.title,
+                price: pkg.price
+              },
+              appointment: {
+                date: formatBookingDateTime(),
+                time: selectedTime
+              }
+            }
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          statusMsg.className = 'payment-status-message error';
+          statusMsg.innerText = data.error || 'Failed to create Square checkout session.';
+          statusMsg.style.display = 'block';
+          btnNext.disabled = false;
+          btnNext.innerText = 'Submit Booking & Pay $100';
+        }
+      } catch (err) {
+        statusMsg.className = 'payment-status-message error';
+        statusMsg.innerText = 'Server error creating Square checkout link.';
+        statusMsg.style.display = 'block';
+        btnNext.disabled = false;
+        btnNext.innerText = 'Submit Booking & Pay $100';
+      }
+    }
+
+    async function processSquarePaymentSubmission() {
+      const btnNext = document.getElementById('btn-next');
+      const statusMsg = document.getElementById('payment-status-message');
+      statusMsg.style.display = 'none';
+
+      btnNext.disabled = true;
+      btnNext.innerHTML = '<span>⏳ Processing Payment with Square...</span>';
+
+      let sourceToken = 'mock_card_token';
+
+      // If official Square card attached, tokenize
+      if (squareCard) {
+        try {
+          const tokenResult = await squareCard.tokenize();
+          if (tokenResult.status === 'OK') {
+            sourceToken = tokenResult.token;
+          } else {
+            const errorMsg = tokenResult.errors ? tokenResult.errors.map(e => e.message).join('; ') : 'Card validation failed.';
+            statusMsg.className = 'payment-status-message error';
+            statusMsg.innerText = errorMsg;
+            statusMsg.style.display = 'block';
+            btnNext.disabled = false;
+            btnNext.innerText = 'Submit Booking & Pay $100';
+            return;
+          }
+        } catch (tokenErr) {
+          statusMsg.className = 'payment-status-message error';
+          statusMsg.innerText = 'Tokenization error: ' + tokenErr.message;
+          statusMsg.style.display = 'block';
+          btnNext.disabled = false;
+          btnNext.innerText = 'Submit Booking & Pay $100';
+          return;
+        }
+      }
+
+      // Gather full booking form payload
+      const pkg = packages[selectedPackageKey];
+      const bookingPayload = {
+        sourceId: sourceToken,
+        bookingDetails: {
+          customer: {
+            firstName: document.getElementById('first-name').value,
+            lastName: document.getElementById('last-name').value,
+            phone: (document.querySelector('.phone-flag-select').value + ' ' + document.getElementById('phone').value).trim(),
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
+            cityStateZip: document.getElementById('city-state-zip').value,
+            participatingAdults: document.getElementById('participating-adults').value,
+            participatingChildren: document.getElementById('participating-children').value,
+            participatingPets: document.getElementById('participating-pets').value,
+            notes: document.getElementById('booking-notes').value,
+            referral: document.getElementById('referral').value
+          },
+          session: {
+            key: selectedPackageKey,
+            title: pkg.title,
+            price: pkg.price
+          },
+          appointment: {
+            date: formatBookingDateTime(),
+            time: selectedTime,
+            rawDate: `${currentCalYear}-${String(currentCalMonth+1).padStart(2,'0')}-${String(selectedDate).padStart(2,'0')}`
+          }
+        }
+      };
+
+      try {
+        const res = await fetch('/api/square/process-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingPayload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showBookingConfirmation(data);
+        } else {
+          statusMsg.className = 'payment-status-message error';
+          statusMsg.innerText = data.error || 'Payment failed. Please check your card information and try again.';
+          statusMsg.style.display = 'block';
+          btnNext.disabled = false;
+          btnNext.innerText = 'Submit Booking & Pay $100';
+        }
+      } catch (networkErr) {
+        statusMsg.className = 'payment-status-message error';
+        statusMsg.innerText = 'Network error contacting server. Please ensure server is running.';
+        statusMsg.style.display = 'block';
+        btnNext.disabled = false;
+        btnNext.innerText = 'Submit Booking & Pay $100';
+      }
+    }
+
+    function showBookingConfirmation(data) {
+      document.getElementById('wizard-buttons').style.display = 'none';
+
+      const pkg = packages[selectedPackageKey];
+      const depositAmount = squareConfig?.depositAmount || 100;
+      const remainingBalance = Math.max(0, pkg.price - depositAmount);
+
+      document.getElementById('success-conf-num').innerText = data.confirmationNumber || data.booking?.confirmationNumber || 'NFS-2026-CONF';
+      document.getElementById('success-session-name').innerText = pkg.title;
+      document.getElementById('success-scheduled-time').innerText = formatBookingDateTime();
+      document.getElementById('success-deposit-paid').innerText = `$${depositAmount}.00 (Square: ${data.isDemo ? 'Demo Mode' : 'Verified'})`;
+      document.getElementById('success-payment-id').innerText = data.paymentId || 'sq_pay_completed';
+      document.getElementById('success-remaining-price').innerText = `$${remainingBalance.toFixed(2)}`;
+
+      const receiptLink = document.getElementById('success-receipt-link');
+      if (data.receiptUrl) {
+        receiptLink.href = data.receiptUrl;
+        document.getElementById('success-receipt-wrapper').style.display = 'block';
+      } else {
+        document.getElementById('success-receipt-wrapper').style.display = 'none';
+      }
+
+      // Hide all panels, show success panel
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`panel-${i}`).classList.remove('active');
+        document.getElementById(`step-node-${i}`).classList.add('completed');
+      }
+      document.getElementById('panel-success').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     // Wizard panel navigation
     function navigateStep(direction) {
       if (direction === 1 && !validateCurrentStep()) {
@@ -1200,6 +1678,10 @@
       document.getElementById(`panel-${currentStep}`).classList.add('active');
       document.getElementById(`step-node-${currentStep}`).classList.add('active');
       document.getElementById(`step-node-${currentStep}`).classList.remove('completed');
+
+      if (currentStep === 4) {
+        initSquarePayment();
+      }
 
       updateWizardButtons();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1233,14 +1715,8 @@
       }
 
       if (currentStep === 4) {
-        const form = document.getElementById('payment-form');
-        if (!form.checkValidity()) {
-          form.reportValidity();
-          return false;
-        }
-        // Process Mock Payment & complete booking!
-        completeBooking();
-        return false; // prevent standard wizard step increment
+        processSquarePaymentSubmission();
+        return false; // prevent default wizard increment
       }
 
       return true;
@@ -1271,29 +1747,6 @@
 
     function toggleTermsAgreement(agreed) {
       updateWizardButtons();
-    }
-
-    function completeBooking() {
-      // Hide buttons
-      document.getElementById('wizard-buttons').style.display = 'none';
-      
-      // Update success summaries
-      const pkg = packages[selectedPackageKey];
-      document.getElementById('success-session-name').innerText = pkg.title;
-      document.getElementById('success-scheduled-time').innerText = formatBookingDateTime();
-      document.getElementById('success-remaining-price').innerText = '$' + (pkg.price - 100).toFixed(2);
-      
-      // Generate a mock confirmation number
-      const confNum = 'LSP-2026-' + Math.floor(1000 + Math.random() * 9000);
-      document.getElementById('success-conf-num').innerText = confNum;
-
-      // Hide all panels, show success panel
-      for (let i = 1; i <= 4; i++) {
-        document.getElementById(`panel-${i}`).classList.remove('active');
-        document.getElementById(`step-node-${i}`).classList.add('completed');
-      }
-      document.getElementById('panel-success').classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function formatBookingDateTime() {

@@ -2,3 +2,5 @@
 dist/
 .wrangler/
 taozijia-images/
+node_modules/
+.env

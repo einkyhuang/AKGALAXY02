@@ -1,0 +1,16 @@
+{
+  "environment": "sandbox",
+  "depositAmount": 100,
+  "currency": "USD",
+  "adminPassword": "Admin2026@Square",
+  "sandbox": {
+    "applicationId": "sandbox-sq0idb-sampleAppIdHere",
+    "accessToken": "EAAA_sampleSandboxAccessTokenHere",
+    "locationId": "L_sampleLocationIdHere"
+  },
+  "production": {
+    "applicationId": "",
+    "accessToken": "",
+    "locationId": ""
+  }
+}
